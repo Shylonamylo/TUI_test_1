@@ -10,9 +10,4 @@ public abstract class Element
     public bool Selected { get; set; }
     
     public virtual bool HandleKey(ConsoleKeyInfo key) => false;
-    
-    public void SetPosition(Vector2 newPosition)
-    {
-        Position = newPosition;
-    }
 }
