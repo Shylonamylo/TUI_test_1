@@ -1,6 +1,8 @@
-﻿namespace TUI_Lib.Interfaces;
+﻿using TUI_Lib.Elements;
 
-public class IElementRenderer
+namespace TUI_Lib.Interfaces;
+
+public interface IElementRenderer
 {
-    
+    public void Render(Element element);
 }

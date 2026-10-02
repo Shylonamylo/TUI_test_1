@@ -1,6 +1,6 @@
-﻿namespace TUI_Lib;
+﻿namespace TUI_Lib.Elements;
 
-public class TextElement : Element
+public class TextElement : BorderElement
 {
     public string Text { get; set; }
 }

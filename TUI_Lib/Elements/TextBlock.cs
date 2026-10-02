@@ -1,8 +1,11 @@
-﻿namespace TUI_Lib;
+﻿using System.Numerics;
+
+namespace TUI_Lib.Elements;
 
 public class TextBlock : TextElement
 {
-    public Border Border { get; set; } = new Border();
+    public override bool Selectable => false;
+
     public TextBlock()
     {
         
@@ -13,9 +16,20 @@ public class TextBlock : TextElement
         Text = text;
     }
 
-    public TextBlock(char horizontal, char vertical, string text)
+    public TextBlock(Border border, string text)
     {
         Text = text;
-        Border = new Border(horizontal, vertical);
+        Border = border;
+    }
+    public TextBlock(Border border, string text, Vector2 position)
+    {
+        Text = text;
+        Border = border;
+        Position = new Vector2(position.X, position.Y);
+    }
+    public TextBlock(string text, Vector2 position)
+    {
+        Text = text;
+        Position = new Vector2(position.X, position.Y);
     }
 }

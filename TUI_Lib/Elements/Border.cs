@@ -1,4 +1,4 @@
-﻿namespace TUI_Lib;
+﻿namespace TUI_Lib.Elements;
 
 public class Border
 {
