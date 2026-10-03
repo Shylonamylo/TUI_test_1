@@ -1,4 +1,6 @@
-﻿namespace TUI_Lib.ConsoleGraphics;
+﻿using TUI_Lib.ConsoleGraphics.Buffering;
+
+namespace TUI_Lib.ConsoleGraphics.Rendering;
 
 public static class Renderer
 {

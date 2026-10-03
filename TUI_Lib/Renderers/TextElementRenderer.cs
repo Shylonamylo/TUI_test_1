@@ -1,4 +1,7 @@
 ﻿using TUI_Lib.ConsoleGraphics;
+using TUI_Lib.ConsoleGraphics.Buffering;
+using TUI_Lib.ConsoleGraphics.Colors;
+using TUI_Lib.ConsoleGraphics.Rendering;
 using TUI_Lib.Elements;
 using TUI_Lib.Interfaces;
 
@@ -9,9 +12,7 @@ public class TextElementRenderer(Canvas canvas) :  IElementRenderer
     
     public void Render(Element element)
     {
-        Console.SetCursorPosition((int)element.Position.X, (int)element.Position.Y);
-        
         TextElement textElement = (TextElement)element;
-        Console.WriteLine(textElement.Text);
+        canvas.WriteString((int)textElement.Position.X, (int)textElement.Position.Y, textElement.Text, element.Style);
     }
 }

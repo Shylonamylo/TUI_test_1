@@ -1,6 +1,6 @@
 ﻿using TUI_Lib.ConsoleGraphics.Colors;
 
-namespace TUI_Lib.ConsoleGraphics;
+namespace TUI_Lib.ConsoleGraphics.Buffering;
 
 public class Cell
 {

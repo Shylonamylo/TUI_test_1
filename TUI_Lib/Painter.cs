@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using TUI_Lib.ConsoleGraphics;
+using TUI_Lib.ConsoleGraphics.Buffering;
+using TUI_Lib.ConsoleGraphics.Rendering;
 using TUI_Lib.Elements;
 using TUI_Lib.Interfaces;
 

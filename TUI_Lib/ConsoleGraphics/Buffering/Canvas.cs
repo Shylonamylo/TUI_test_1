@@ -1,6 +1,6 @@
 ﻿using TUI_Lib.ConsoleGraphics.Colors;
 
-namespace TUI_Lib.ConsoleGraphics;
+namespace TUI_Lib.ConsoleGraphics.Buffering;
 
 public class Canvas
 {
@@ -46,14 +46,6 @@ public class Canvas
     public void Set(int x, int y, char c, Style style)
     {
         _currentCanvas[x, y] = new Cell(c, style);
-    }
-
-    public void WriteString(int x, int y, string str, Style style)
-    {
-        for (int i = 0; i < str.Length; i++)
-        {
-            Set(x+i, y, str[i], style);
-        }
     }
 
     public Cell GetPixel(int x, int y)
