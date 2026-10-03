@@ -1,0 +1,69 @@
+﻿using TUI_Lib.ConsoleGraphics.Colors;
+
+namespace TUI_Lib.ConsoleGraphics;
+
+public class Canvas
+{
+    private Cell[,] _currentCanvas;
+    private Cell[,] _previousCanvas;
+    
+    public int Width { get; }
+    public int Height { get; }
+
+    public Canvas(int width, int height)
+    {
+        _currentCanvas = new Cell[width, height];
+        _previousCanvas = new Cell[width, height];
+        Width = width;
+        Height = height;
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                _currentCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
+                _previousCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
+            }
+        }
+    }
+
+    private void Clear()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                _currentCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
+            }
+        }
+    }
+
+    public void Commit()
+    {
+        Array.Copy(_currentCanvas, _previousCanvas, _currentCanvas.Length);
+        Clear();
+    }
+
+    public void Set(int x, int y, char c, Style style)
+    {
+        _currentCanvas[x, y] = new Cell(c, style);
+    }
+
+    public void WriteString(int x, int y, string str, Style style)
+    {
+        for (int i = 0; i < str.Length; i++)
+        {
+            Set(x+i, y, str[i], style);
+        }
+    }
+
+    public Cell GetPixel(int x, int y)
+    {
+        return _currentCanvas[x, y];
+    }
+
+    public bool HasChanged(int x, int y)
+    {
+        return _currentCanvas[x, y].Char != _previousCanvas[x, y].Char || _currentCanvas[x, y].Style.BackgroundColor != _previousCanvas[x, y].Style.BackgroundColor || _currentCanvas[x, y].Style.ForegroundColor != _previousCanvas[x, y].Style.ForegroundColor;
+    }
+    
+}

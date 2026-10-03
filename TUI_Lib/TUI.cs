@@ -1,4 +1,5 @@
-﻿using TUI_Lib.Elements;
+﻿using TUI_Lib.ConsoleGraphics;
+using TUI_Lib.Elements;
 
 namespace TUI_Lib;
 
@@ -7,6 +8,8 @@ public class TUI
     private CancellationTokenSource cts = new();
     private readonly Painter _painter;
     public int SelectedIndex = 0;
+
+    private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
     
     private readonly List<Element> _elements = new();
     
@@ -92,8 +95,10 @@ public class TUI
     {
         foreach (var element in _elements)
         {
-            _painter.Paint(element);
+            _painter.Paint(element, _canvas);
         }
+        
+        Renderer.Draw(_canvas);
     }
 
     public void Stop()

@@ -1,32 +1,25 @@
-﻿using TUI_Lib.Elements;
+﻿using TUI_Lib.ConsoleGraphics;
+using TUI_Lib.Elements;
 using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class TextBlockRenderer : IElementRenderer
+public class TextBlockRenderer(Canvas canvas) : IElementRenderer
 {
-    public TextBlockRenderer()
-    {
-        
-    }
     public void Render(Element element)
     {
-        Console.SetCursorPosition((int)element.Position.X, (int)element.Position.Y);
-        
         TextBlock textBlock = (TextBlock)element;
         
         for (int i = 0; i < textBlock.Text.Length + 2; i++)
         {
-            Console.Write(textBlock.Border.HorizontalChar);
+            canvas.Set((int)textBlock.Position.X+i, (int)textBlock.Position.Y, textBlock.Border.HorizontalChar, element.Style);
         }
         
-        Console.Write("\n");
-        Console.SetCursorPosition((int)element.Position.X, (int)element.Position.Y+1);
-        Console.WriteLine(textBlock.Border.VerticalChar + textBlock.Text + textBlock.Border.VerticalChar);
-        Console.SetCursorPosition((int)element.Position.X, (int)element.Position.Y+2);
+        canvas.WriteString((int)textBlock.Position.X, (int)textBlock.Position.Y+1, $"{textBlock.Border.VerticalChar}{textBlock.Text}{textBlock.Border.VerticalChar}", element.Style);
+        
         for (int i = 0; i < textBlock.Text.Length + 2; i++)
         {
-            Console.Write(textBlock.Border.HorizontalChar);
+            canvas.Set((int)textBlock.Position.X+i, (int)textBlock.Position.Y+2, textBlock.Border.HorizontalChar, element.Style);
         }
     }
 }
