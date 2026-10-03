@@ -12,24 +12,19 @@ class Program
         TUI ui = new TUI();
     
         Style style = new Style(ConsoleColor.White, ConsoleColor.Black);
-        
-        ui.AddElement(new TextBlock{Border = new Border(), Position = new Vector2(0, 0), Style = style, Text = "Привет мир!"});
-        
         Button button = new Button{Position = new Vector2(3, 3), Label = "Нажми на меня!", Border = new Border(), Style = style};
-        
-        ui.AddElement(button);
-        
         Button button2 = new Button{Position = new Vector2(3, 6), Label = "Нажми на меня2!", Border = new Border(), Style = style};
-        
-        ui.AddElement(button2);
-
+        TextBlock textBlock = new TextBlock{ Border = new Border(), Position = new Vector2(0, 0), Style = style, Text = "Привет мир!" };
+            
         button.OnClick += () =>
         {
             Console.Clear();
         };
         
-        ui.Run();
+        ui.AddElement(textBlock);
+        ui.AddElement(button);
+        ui.AddElement(button2);
         
-        Console.ReadLine();
+        ui.Run();
     }
 }
