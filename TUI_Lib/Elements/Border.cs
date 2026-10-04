@@ -5,6 +5,8 @@ public class Border
     public char HorizontalChar = '-';
     public char VerticalChar = '|';
     
+    public static Border Default => new('-', '|');
+    
     public Border()
     {
     }

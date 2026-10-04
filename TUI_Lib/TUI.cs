@@ -23,11 +23,18 @@ public class TUI
     public void Run()
     {
         Console.CursorVisible = false;
+        
         while (!cts.IsCancellationRequested)
         {
             Render();
-            var key = Console.ReadKey(true);
-            HandleKey(key);
+        
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true);
+                HandleKey(key);
+            }
+
+            Thread.Sleep(16);
         }
     }
 

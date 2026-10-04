@@ -14,10 +14,19 @@ public static class Renderer
                 Console.SetCursorPosition(x, y);
                 
                 Cell cell = canvas.GetPixel(x, y);
-                
-                Console.BackgroundColor = cell.Style.BackgroundColor;
-                Console.ForegroundColor = cell.Style.ForegroundColor;
-                Console.Write(cell.Char);
+
+                if (cell.Char != '\0')
+                {
+                    Console.BackgroundColor = cell.Style.BackgroundColor;
+                    Console.ForegroundColor = cell.Style.ForegroundColor;
+                    Console.Write(cell.Char);
+                }
+                else
+                {
+                    Console.BackgroundColor = cell.Style.ForegroundColor;
+                    Console.ForegroundColor = cell.Style.BackgroundColor;
+                    Console.Write(cell.Char);
+                }
             }
         }
         canvas.Commit();

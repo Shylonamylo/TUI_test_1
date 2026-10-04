@@ -20,8 +20,8 @@ public class Canvas
         {
             for (int y = 0; y < Height; y++)
             {
-                _currentCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
-                _previousCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
+                _currentCanvas[x, y] = new Cell('\0', new Style(ConsoleColor.Black, ConsoleColor.White));
+                _previousCanvas[x, y] = new Cell('\0', new Style(ConsoleColor.Black, ConsoleColor.White));
             }
         }
     }
@@ -32,7 +32,7 @@ public class Canvas
         {
             for (int y = 0; y < Height; y++)
             {
-                _currentCanvas[x, y] = new Cell(' ', new Style(ConsoleColor.Black, ConsoleColor.White));
+                _currentCanvas[x, y] = new Cell('\0', new Style(ConsoleColor.Black, ConsoleColor.White));
             }
         }
     }
@@ -43,9 +43,17 @@ public class Canvas
         Clear();
     }
 
-    public void Set(int x, int y, char c, Style style)
+    public bool Set(int x, int y, char c, Style style)
     {
-        _currentCanvas[x, y] = new Cell(c, style);
+        if (x >= 0 && x < Width && y >= 0 && y < Height)
+        {
+            _currentCanvas[x, y] = new Cell(c, style);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public Cell GetPixel(int x, int y)
@@ -55,7 +63,9 @@ public class Canvas
 
     public bool HasChanged(int x, int y)
     {
-        return _currentCanvas[x, y].Char != _previousCanvas[x, y].Char || _currentCanvas[x, y].Style.BackgroundColor != _previousCanvas[x, y].Style.BackgroundColor || _currentCanvas[x, y].Style.ForegroundColor != _previousCanvas[x, y].Style.ForegroundColor;
+        return _currentCanvas[x, y].Char != _previousCanvas[x, y].Char || 
+               _currentCanvas[x, y].Style.BackgroundColor != _previousCanvas[x, y].Style.BackgroundColor || 
+               _currentCanvas[x, y].Style.ForegroundColor != _previousCanvas[x, y].Style.ForegroundColor;
     }
     
 }

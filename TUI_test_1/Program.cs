@@ -34,15 +34,31 @@ class Program
             Text = "Привет мир!",
             Style = Style.Default 
         };
+
+        TextBox textBox = new TextBox()
+        {
+            Position = new Vector2(0, 9),
+            Border = new Border(),
+            Style = Style.Default
+        };
             
         button.OnClick += () =>
         {
             Console.Clear();
         };
+
+        textBox.OnKeyDown += (ConsoleKey key) =>
+        {
+            if (key == ConsoleKey.Enter)
+            {
+                textBlock.Text = textBox.Text;
+            }
+        };
         
         ui.AddElement(textBlock);
         ui.AddElement(button);
         ui.AddElement(button2);
+        ui.AddElement(textBox);
         
         ui.Run();
     }

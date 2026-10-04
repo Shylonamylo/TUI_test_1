@@ -10,16 +10,7 @@ public class TextBlockRenderer(Canvas canvas) : IElementRenderer
     {
         TextBlock textBlock = (TextBlock)element;
         
-        for (int i = 0; i < textBlock.Text.Length + 2; i++)
-        {
-            canvas.Set((int)textBlock.Position.X+i, (int)textBlock.Position.Y, textBlock.Border.HorizontalChar, element.Style);
-        }
-        
-        canvas.WriteString((int)textBlock.Position.X, (int)textBlock.Position.Y+1, $"{textBlock.Border.VerticalChar}{textBlock.Text}{textBlock.Border.VerticalChar}", element.Style);
-        
-        for (int i = 0; i < textBlock.Text.Length + 2; i++)
-        {
-            canvas.Set((int)textBlock.Position.X+i, (int)textBlock.Position.Y+2, textBlock.Border.HorizontalChar, element.Style);
-        }
+        canvas.DrawBox((int)textBlock.Position.X, (int)textBlock.Position.Y, textBlock.Text.Length+2, 3, textBlock.Border.HorizontalChar, textBlock.Border.VerticalChar, textBlock.Style);
+        canvas.WriteString((int)textBlock.Position.X+1, (int)textBlock.Position.Y+1, textBlock.Text, textBlock.Style);
     }
 }
