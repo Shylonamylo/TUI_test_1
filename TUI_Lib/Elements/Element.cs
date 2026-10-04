@@ -1,12 +1,14 @@
 ﻿using System.Numerics;
 using TUI_Lib.ConsoleGraphics.Colors;
+using TUI_Lib.ConsoleGraphics.Types;
 
 namespace TUI_Lib.Elements;
 
 public abstract class Element
 {
     public int Id { get; set; }
-    public Vector2 Position { get; set; }
+    public Vec2I Position { get; set; }
+    public virtual Vec2I Size { get; set; }
     public virtual bool Selectable { get; } = true;
     public bool Selected { get; set; }
     public Style Style { get; set; } = new Style(ConsoleColor.White, ConsoleColor.Black);

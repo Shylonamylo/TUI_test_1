@@ -13,6 +13,6 @@ public class TextElementRenderer(Canvas canvas) :  IElementRenderer
     public void Render(Element element)
     {
         TextElement textElement = (TextElement)element;
-        canvas.WriteString((int)textElement.Position.X, (int)textElement.Position.Y, textElement.Text, textElement.Style);
+        canvas.WriteString(textElement.Position.X, textElement.Position.Y, textElement.Text, textElement.Style);
     }
 }

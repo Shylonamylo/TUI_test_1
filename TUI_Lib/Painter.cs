@@ -1,17 +1,15 @@
 ﻿using System.Reflection;
-using TUI_Lib.ConsoleGraphics;
 using TUI_Lib.ConsoleGraphics.Buffering;
-using TUI_Lib.ConsoleGraphics.Rendering;
 using TUI_Lib.Elements;
 using TUI_Lib.Interfaces;
 
 namespace TUI_Lib;
 
-public class Painter
+public static class Painter
 {
-    private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+    private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
     
-    public void Paint(Element element, Canvas canvas)
+    public static void Paint(Element element, Canvas canvas)
     {
         var type = element.GetType();
         

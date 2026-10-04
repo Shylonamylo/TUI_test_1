@@ -11,8 +11,7 @@ public class ButtonRenderer(Canvas canvas) : IElementRenderer
     {
         Button button = (Button)element;
 
-        canvas.DrawBox((int)button.Position.X, (int)button.Position.Y, button.Label.Length+2, 3, button.Border.HorizontalChar, button.Border.VerticalChar, button.Style);
-        canvas.WriteString((int)button.Position.X+1, (int)button.Position.Y+1, $"{button.Label}", button.Selected?button.Style.GetInverted():button.Style);
+        canvas.DrawBox(button.Position.X, button.Position.Y, button.Label.Length+2, 3, button.Border.HorizontalChar, button.Border.VerticalChar, button.Style);
+        canvas.WriteString(button.Position.X+1, button.Position.Y+1, $"{button.Label}", button.Selected?button.Style.GetInverted():button.Style);
     }
-
 }

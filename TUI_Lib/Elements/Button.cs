@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using TUI_Lib.ConsoleGraphics.Types;
 
 namespace TUI_Lib.Elements;
 
@@ -9,7 +10,7 @@ public class Button : Element
     
     public override bool Selectable => true;
     
-    public Border Border { get; set; } = new();
+    public Border? Border { get; set; }
     
     public override bool HandleKey(ConsoleKeyInfo key){
         
@@ -22,26 +23,5 @@ public class Button : Element
     public Button()
     {
         
-    }
-    public Button(string label)
-    {
-        Label = label;
-    }
-    public Button(string label, Vector2 position)
-    {
-        Label = label;
-        Position = position;
-    }
-    public Button(string label, Border border)
-    {
-        Label = label;
-        Border = border;
-    }
-
-    public Button(string label, Border border, Vector2 position)
-    {
-        Label = label;
-        Border = border;
-        Position = position;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace TUI_Lib.Elements;
+﻿using TUI_Lib.ConsoleGraphics.Types;
+
+namespace TUI_Lib.Elements;
 
 public class TextBox : TextBlock
 {
@@ -59,35 +61,19 @@ public class TextBox : TextBlock
 
     private void InsertChar(char character)
     {
-        try
-        {
-            List<char> _text = Text.ToList();
-            _text.Insert(_cursorPos, character);
-            Text = new string(_text.ToArray());
-            _cursorPos++;
-            OnTextChanged?.Invoke(Text);
-        }
-        catch
-        {
-            // ignored
-        }
+        Text = Text.Insert(_cursorPos, character.ToString());
+        _cursorPos++;
+        OnTextChanged?.Invoke(Text);
     }
     private void RemoveChar(int position)
     {
-        try
-        { 
-            if (Text.Length > 0)
-            {
-                List<char> _text = Text.ToList();
-                _text.RemoveAt(position-1);
-                Text = new string(_text.ToArray());
-                _cursorPos--;
-                OnTextChanged?.Invoke(Text);
-            }
-        }
-        catch
+        if (Text.Length > 0 && position >= 0 && position < Text.Length)
         {
-            // ignored
+            List<char> _text = Text.ToList();
+            _text.RemoveAt(position-1);
+            Text = new string(_text.ToArray());
+            _cursorPos--;
+            OnTextChanged?.Invoke(Text);
         }
     }
 

@@ -8,7 +8,6 @@ namespace TUI_Lib;
 public class TUI
 {
     private CancellationTokenSource cts = new();
-    private readonly Painter _painter;
     public int SelectedIndex = 0;
 
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
@@ -17,7 +16,6 @@ public class TUI
     
     public TUI()
     {
-        _painter = new Painter();
     }
     
     public void Run()
@@ -104,7 +102,7 @@ public class TUI
     {
         foreach (var element in _elements)
         {
-            _painter.Paint(element, _canvas);
+            Painter.Paint(element, _canvas);
         }
         
         Renderer.Draw(_canvas);

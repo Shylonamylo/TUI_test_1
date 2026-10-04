@@ -1,0 +1,46 @@
+﻿using TUI_Lib.ConsoleGraphics.Buffering;
+using TUI_Lib.ConsoleGraphics.Types;
+using TUI_Lib.Elements;
+using TUI_Lib.Interfaces;
+
+namespace TUI_Lib.Renderers;
+
+public class StackPanelRenderer(Canvas canvas) : IElementRenderer
+{
+    public void Render(Element element)
+    {
+        StackPanel stackPanel = (StackPanel)element;
+        if (stackPanel.Horizontal)
+        {
+            for (int i = 0; i < stackPanel.Childrens.Count; i++)
+            {
+                int offsetX = stackPanel.Position.X;
+                int offsetY = stackPanel.Position.Y;
+                foreach (var childElement in stackPanel.Childrens)
+                {
+                    Element renderedChildElement = childElement;
+                    Vec2I position = new(offsetX, offsetY);
+                    renderedChildElement.Position = position;
+                    offsetX += childElement.Size.X;
+                    Painter.Paint(renderedChildElement, canvas);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < stackPanel.Childrens.Count; i++)
+            {
+                int offsetX = stackPanel.Position.X;
+                int offsetY = stackPanel.Position.Y;
+                foreach (var childElement in stackPanel.Childrens)
+                {
+                    Element renderedChildElement = childElement;
+                    Vec2I position = new(offsetX, offsetY);
+                    renderedChildElement.Position = position;
+                    offsetY += childElement.Size.Y;
+                    Painter.Paint(renderedChildElement, canvas);
+                }
+            }
+        }
+    }
+}
