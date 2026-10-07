@@ -67,7 +67,7 @@ public class TextBox : TextBlock
     }
     private void RemoveChar(int position)
     {
-        if (Text.Length > 0 && position >= 0 && position < Text.Length)
+        if (Text.Length > 0 && position >= 0 && position < Text.Length+1)
         {
             List<char> _text = Text.ToList();
             _text.RemoveAt(position-1);

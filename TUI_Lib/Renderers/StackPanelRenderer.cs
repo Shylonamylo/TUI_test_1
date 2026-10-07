@@ -21,7 +21,7 @@ public class StackPanelRenderer(Canvas canvas) : IElementRenderer
                     Element renderedChildElement = childElement;
                     Vec2I position = new(offsetX, offsetY);
                     renderedChildElement.Position = position;
-                    offsetX += childElement.Size.X;
+                    offsetX += childElement.Size.X+1;
                     Painter.Paint(renderedChildElement, canvas);
                 }
             }

@@ -12,84 +12,59 @@ class Program
     {
         TUI ui = new TUI();
 
-        Button button = new Button
+        StackPanel stackPanel = new StackPanel()
         {
-            Position = new Vec2I(3, 3), 
-            Label = "Нажми на меня!", 
-            Border = new Border(), 
-            Style = Style.Default
+            Horizontal = true,
         };
         
-        Button button2 = new Button
+        Button button = new Button()
         {
-            Position = new Vec2I(3, 6), 
-            Label = "Нажми на меня2!", 
-            Border = new Border(), 
-            Style = Style.Default
+            Border =  new Border(),
+            Label = "Проверка 1",
+            Style = Style.Default,
         };
-        
-        TextBlock textBlock = new TextBlock
-        {
-            Border = new Border(), 
-            Position = new Vec2I(0, 0), 
-            Text = "Привет мир!",
-            Style = Style.Default
-        };
+
+        StackPanel stackPanel2 = new StackPanel();
 
         TextBox textBox = new TextBox()
         {
-            Position = new Vec2I(0, 9),
             Border = new Border(),
-            Style = Style.Default
+            Style = Style.Default,
         };
-
-        Container container = new StackPanel()
+        
+        Button button2 = new Button()
         {
-            Position = new Vec2I(0, 14),
-            Border = new Border(),
-            Horizontal = true,
-            Style = Style.Default
+            Border =  new Border(),
+            Label = "Проверка 2",
+            Style = Style.Default,
         };
+        
+        StackPanel stackPanel3 = new StackPanel();
 
-        TextBlock textBlockContainerTest = new TextBlock()
+        TextBox textBox2 = new TextBox()
         {
             Border = new Border(),
             Style = Style.Default,
-            Text = "Привет из контейнера"
         };
-        TextBlock textBlockContainerTest2 = new TextBlock()
+        
+        Button button3 = new Button()
         {
-            Border = new Border(),
+            Border =  new Border(),
+            Label = "Проверка 3",
             Style = Style.Default,
-            Text = "Привет из контейнера2"
         };
         
-        container.AddChildren(textBlockContainerTest);
-        container.AddChildren(textBlockContainerTest2);
-            
-        button.OnClick += () =>
-        {
-            Console.Clear();
-        };
-
-        textBox.OnKeyDown += (ConsoleKey key) =>
-        {
-            if (key == ConsoleKey.Enter)
-            {
-                textBlock.Text = textBox.Text;
-            }
-        };
-
-        button2.OnClick += () =>
-        {
-            textBlock.Text = "12341234";
-        };
+        stackPanel3.AddChildren(button3);
+        stackPanel3.AddChildren(textBox2);
         
-        ui.AddElement(textBlock);
-        ui.AddElement(button);
-        ui.AddElement(button2);
-        ui.AddElement(textBox);
-        ui.AddElement(container);
+        stackPanel2.AddChildren(textBox);
+        stackPanel2.AddChildren(button2);
+        
+        stackPanel.AddChildren(button);
+        stackPanel.AddChildren(stackPanel2);
+        stackPanel.AddChildren(stackPanel3);
+        
+        ui.AddElement(stackPanel);
         
         ui.Run();
     }

@@ -9,8 +9,8 @@ public abstract class Element
     public int Id { get; set; }
     public Vec2I Position { get; set; }
     public virtual Vec2I Size { get; set; }
-    public virtual bool Selectable { get; } = true;
-    public bool Selected { get; set; }
+    public virtual bool Selectable { get; set; } = true;
+    public virtual bool Selected { get; set; }
     public Style Style { get; set; } = new Style(ConsoleColor.White, ConsoleColor.Black);
     
     public virtual bool HandleKey(ConsoleKeyInfo key) => false;

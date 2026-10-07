@@ -13,6 +13,9 @@ public class TUI
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
     
     private readonly List<Element> _elements = new();
+
+    private int _maxSelectableId = -1;
+    private int _minSelectableId = -1;
     
     public TUI()
     {
@@ -21,6 +24,7 @@ public class TUI
     public void Run()
     {
         Console.CursorVisible = false;
+        SelectElement(_minSelectableId);
         
         while (!cts.IsCancellationRequested)
         {
@@ -42,12 +46,13 @@ public class TUI
         _elements[index].Selected = true;
         SelectedIndex = index;
     }
+    
     private void MoveSelection(int delta)
     {
         var index = -1;
         if (delta > 0)
         {
-            for (int i = SelectedIndex+1; i < _elements.Count; i++)
+            for (int i = SelectedIndex+delta; i < _elements.Count; i++)
             {
                 if (_elements[i].Selectable)
                 {
@@ -57,7 +62,7 @@ public class TUI
             }
         }else if (delta < 0)
         {
-            for (int i = SelectedIndex-1; i > 0; i--)
+            for (int i = SelectedIndex+delta; i >= 0; i--)
             {
                 if (_elements[i].Selectable)
                 {
@@ -75,6 +80,7 @@ public class TUI
 
     public void HandleKey(ConsoleKeyInfo key)
     {
+        if(_elements[SelectedIndex].HandleKey(key)) return;
         switch (key.Key)
         {
             case ConsoleKey.UpArrow:
@@ -83,19 +89,20 @@ public class TUI
             case ConsoleKey.DownArrow:
                 MoveSelection(1);
                 break;
-            case ConsoleKey.Enter:
-                _elements[SelectedIndex].HandleKey(key);
-                break;
-            default:
-                if (SelectedIndex >= 0)
-                    _elements[SelectedIndex].HandleKey(key);
-                break;
         }
     }
     
     public void AddElement(Element element)
     {
         _elements.Add(element);
+        if (element.Selectable)
+        {
+            if (_maxSelectableId == -1)
+            {
+                _minSelectableId = _elements.Count-1;
+            }
+            _maxSelectableId = _elements.Count-1;
+        }
     }
 
     public void Render()
