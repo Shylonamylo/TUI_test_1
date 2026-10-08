@@ -1,11 +1,12 @@
 ﻿namespace TUI_Lib.ConsoleGraphics.Colors;
 
-public class Style(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+public readonly record struct Style(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
 {
-    public ConsoleColor ForegroundColor { get; set; } = foregroundColor;
-    public ConsoleColor BackgroundColor { get; set; } = backgroundColor;
+    public ConsoleColor ForegroundColor { get; } = foregroundColor;
+    public ConsoleColor BackgroundColor { get; } = backgroundColor;
     
     public static readonly Style Default = new Style(ConsoleColor.White, ConsoleColor.Black); 
+    public static readonly Style DefaultInverted = new Style(ConsoleColor.Black, ConsoleColor.White); 
     
     public Style GetInverted()
     {

@@ -9,24 +9,36 @@ public static class Painter
 {
     private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
     
+    private static Dictionary<Type, IElementRenderer> _renderers = new();
+    
     public static void Paint(Element element, Canvas canvas)
     {
         var type = element.GetType();
-        
-        var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
-        
         try
         {
-            var rendererType = _assembly.GetType($"{nameSpace}.{type.Name}Renderer");
+            var renderer = TryGetRenderer(type, canvas);
             
-            if (rendererType == null) return;
-            
-            var renderer = (IElementRenderer)Activator.CreateInstance(rendererType, canvas)!;
             renderer.Render(element);
         }
         catch(Exception e)
         {
             Console.WriteLine(e);
+        }
+    }
+
+    public static IElementRenderer TryGetRenderer(Type type, Canvas canvas)
+    {
+        if (_renderers.TryGetValue(type, out var elementRenderer))
+        {
+            return elementRenderer;
+        }
+        else
+        {
+            var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
+            var rendererType = _assembly.GetType($"{nameSpace}.{type.Name}Renderer");
+            IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType, canvas)!;
+            _renderers.Add(type, renderer);
+            return renderer;
         }
     }
 }

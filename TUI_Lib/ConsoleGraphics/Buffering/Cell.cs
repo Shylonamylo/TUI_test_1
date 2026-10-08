@@ -2,10 +2,10 @@
 
 namespace TUI_Lib.ConsoleGraphics.Buffering;
 
-public class Cell
+public readonly record struct Cell
 {
-    public char Char { get; set; }
-    public Style Style;
+    public readonly char Char;
+    public readonly Style Style;
         
         
     public Cell(char c, Style style)

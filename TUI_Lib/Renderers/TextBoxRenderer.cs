@@ -1,7 +1,6 @@
 ﻿using TUI_Lib.ConsoleGraphics.Buffering;
 using TUI_Lib.Elements;
 using TUI_Lib.Interfaces;
-using Timer = System.Timers.Timer;
 
 namespace TUI_Lib.Renderers;
 

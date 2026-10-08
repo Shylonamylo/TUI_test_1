@@ -53,6 +53,11 @@ class Program
             Label = "Проверка 3",
             Style = Style.Default,
         };
+
+        textBox2.OnTextChanged += (s) =>
+        {   
+            button.Label = s;
+        };
         
         stackPanel3.AddChildren(button3);
         stackPanel3.AddChildren(textBox2);

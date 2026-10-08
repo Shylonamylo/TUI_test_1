@@ -12,34 +12,28 @@ public class StackPanelRenderer(Canvas canvas) : IElementRenderer
         StackPanel stackPanel = (StackPanel)element;
         if (stackPanel.Horizontal)
         {
-            for (int i = 0; i < stackPanel.Childrens.Count; i++)
+            int offsetX = stackPanel.Position.X;
+            int offsetY = stackPanel.Position.Y;
+            foreach (var childElement in stackPanel.Childrens)
             {
-                int offsetX = stackPanel.Position.X;
-                int offsetY = stackPanel.Position.Y;
-                foreach (var childElement in stackPanel.Childrens)
-                {
-                    Element renderedChildElement = childElement;
-                    Vec2I position = new(offsetX, offsetY);
-                    renderedChildElement.Position = position;
-                    offsetX += childElement.Size.X+1;
-                    Painter.Paint(renderedChildElement, canvas);
-                }
+                Element renderedChildElement = childElement;
+                Vec2I position = new(offsetX, offsetY);
+                renderedChildElement.Position = position;
+                offsetX += childElement.Size.X+1;
+                Painter.Paint(renderedChildElement, canvas);
             }
         }
         else
         {
-            for (int i = 0; i < stackPanel.Childrens.Count; i++)
+            int offsetX = stackPanel.Position.X;
+            int offsetY = stackPanel.Position.Y;
+            foreach (var childElement in stackPanel.Childrens)
             {
-                int offsetX = stackPanel.Position.X;
-                int offsetY = stackPanel.Position.Y;
-                foreach (var childElement in stackPanel.Childrens)
-                {
-                    Element renderedChildElement = childElement;
-                    Vec2I position = new(offsetX, offsetY);
-                    renderedChildElement.Position = position;
-                    offsetY += childElement.Size.Y;
-                    Painter.Paint(renderedChildElement, canvas);
-                }
+                Element renderedChildElement = childElement;
+                Vec2I position = new(offsetX, offsetY);
+                renderedChildElement.Position = position;
+                offsetY += childElement.Size.Y;
+                Painter.Paint(renderedChildElement, canvas);
             }
         }
     }

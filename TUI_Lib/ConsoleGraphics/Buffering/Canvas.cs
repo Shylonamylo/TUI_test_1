@@ -32,14 +32,14 @@ public class Canvas
         {
             for (int y = 0; y < Height; y++)
             {
-                _currentCanvas[x, y] = new Cell('\0', new Style(ConsoleColor.Black, ConsoleColor.White));
+                Set(x, y, '\0', Style.DefaultInverted);
             }
         }
     }
 
     public void Commit()
     {
-        Array.Copy(_currentCanvas, _previousCanvas, _currentCanvas.Length);
+        (_currentCanvas, _previousCanvas) = (_previousCanvas, _currentCanvas);
         Clear();
     }
 
@@ -48,6 +48,7 @@ public class Canvas
         if (x >= 0 && x < Width && y >= 0 && y < Height)
         {
             _currentCanvas[x, y] = new Cell(c, style);
+
             return true;
         }
         else

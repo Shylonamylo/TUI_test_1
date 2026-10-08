@@ -28,13 +28,13 @@ public class TUI
         
         while (!cts.IsCancellationRequested)
         {
-            Render();
-        
-            if (Console.KeyAvailable)
+            while(Console.KeyAvailable)
             {
                 var key = Console.ReadKey(true);
                 HandleKey(key);
             }
+            
+            Render();
 
             Thread.Sleep(16);
         }
