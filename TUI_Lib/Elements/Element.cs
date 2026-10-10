@@ -11,7 +11,7 @@ public abstract class Element
     public virtual Vec2I Size { get; set; }
     public virtual bool Selectable { get; set; } = true;
     public virtual bool Selected { get; set; }
-    public Style Style { get; set; } = new Style(ConsoleColor.White, ConsoleColor.Black);
+    public Style Style { get; set; } = Style.Default;
     
     public virtual bool HandleKey(ConsoleKeyInfo key) => false;
 }

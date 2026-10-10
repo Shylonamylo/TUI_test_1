@@ -9,8 +9,8 @@ public class Button : Element
     public event Action? OnClick;
 
     public override bool Selectable => true;
-    
-    public Border? Border { get; set; }
+
+    public Border? Border { get; set; } = Border.Default;
     
     public override Vec2I Size => Border==null?new Vec2I(Label.Length, 1):new Vec2I(Label.Length+2, 3); 
     

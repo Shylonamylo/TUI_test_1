@@ -14,8 +14,8 @@ public class TUI
     
     private readonly List<Element> _elements = new();
 
-    private int _maxSelectableId = -1;
-    private int _minSelectableId = -1;
+    private int _maxSelectableId = 0;
+    private int _minSelectableId = 0;
     
     public TUI()
     {

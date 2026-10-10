@@ -4,6 +4,16 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>Shylonamylo.Tui</PackageId>
+        <Version>0.1.0</Version>
+        <Title>TUI from Shylonamylo</Title>
+        <Authors>Shylonamylo</Authors>
+        <Description>Simple TUI framework</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Shylonamylo/TUI_test_1</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Shylonamylo/TUI_test_1</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>tui;console;terminal;framework;csharp</PackageTags>
     </PropertyGroup>
 
 </Project>

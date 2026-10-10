@@ -12,64 +12,40 @@ class Program
     {
         TUI ui = new TUI();
 
-        StackPanel stackPanel = new StackPanel()
+        StackPanel mainPanel = new StackPanel();
+        
+        Button addItemButton = new Button()
         {
-            Horizontal = true,
+            Label = "Добавить",
         };
         
-        Button button = new Button()
+        StackPanel addInfoNamePanel = new StackPanel()
         {
-            Border =  new Border(),
-            Label = "Проверка 1",
-            Style = Style.Default,
+            Horizontal = true
+        };
+        
+        TextBlock addInfoNameLabel = new TextBlock()
+        {
+            Text = "Введите название"
+        };
+        
+        TextBox addInfoNameText = new TextBox();
+        
+        StackPanel itemsPanel = new StackPanel();
+
+        addItemButton.OnClick += () =>
+        {
+            itemsPanel.AddElement(new TextBlock(){Text = addInfoNameText.Text});
         };
 
-        StackPanel stackPanel2 = new StackPanel();
-
-        TextBox textBox = new TextBox()
-        {
-            Border = new Border(),
-            Style = Style.Default,
-        };
+        addInfoNamePanel.AddElement(addInfoNameLabel);
+        addInfoNamePanel.AddElement(addInfoNameText);
         
-        Button button2 = new Button()
-        {
-            Border =  new Border(),
-            Label = "Проверка 2",
-            Style = Style.Default,
-        };
+        mainPanel.AddElement(addInfoNamePanel);
+        mainPanel.AddElement(addItemButton);
+        mainPanel.AddElement(itemsPanel);
         
-        StackPanel stackPanel3 = new StackPanel();
-
-        TextBox textBox2 = new TextBox()
-        {
-            Border = new Border(),
-            Style = Style.Default,
-        };
-        
-        Button button3 = new Button()
-        {
-            Border =  new Border(),
-            Label = "Проверка 3",
-            Style = Style.Default,
-        };
-
-        textBox2.OnTextChanged += (s) =>
-        {   
-            button.Label = s;
-        };
-        
-        stackPanel3.AddChildren(button3);
-        stackPanel3.AddChildren(textBox2);
-        
-        stackPanel2.AddChildren(textBox);
-        stackPanel2.AddChildren(button2);
-        
-        stackPanel.AddChildren(button);
-        stackPanel.AddChildren(stackPanel2);
-        stackPanel.AddChildren(stackPanel3);
-        
-        ui.AddElement(stackPanel);
+        ui.AddElement(mainPanel);
         
         ui.Run();
     }

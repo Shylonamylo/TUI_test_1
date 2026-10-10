@@ -14,7 +14,7 @@ public class StackPanelRenderer(Canvas canvas) : IElementRenderer
         {
             int offsetX = stackPanel.Position.X;
             int offsetY = stackPanel.Position.Y;
-            foreach (var childElement in stackPanel.Childrens)
+            foreach (var childElement in stackPanel.Elements)
             {
                 Element renderedChildElement = childElement;
                 Vec2I position = new(offsetX, offsetY);
@@ -27,7 +27,7 @@ public class StackPanelRenderer(Canvas canvas) : IElementRenderer
         {
             int offsetX = stackPanel.Position.X;
             int offsetY = stackPanel.Position.Y;
-            foreach (var childElement in stackPanel.Childrens)
+            foreach (var childElement in stackPanel.Elements)
             {
                 Element renderedChildElement = childElement;
                 Vec2I position = new(offsetX, offsetY);

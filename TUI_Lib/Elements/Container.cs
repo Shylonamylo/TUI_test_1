@@ -2,10 +2,11 @@
 
 public abstract class Container : Element
 {
-    public List<Element> Childrens { get; private set; } = new();
+    public List<Element> Elements { get; private set; } = new();
 
-    protected int _maxSelectableId = -1;
-    protected int _minSelectableId = -1;
+    protected int MaxSelectableId = -1;
+    protected int MinSelectableId = -1;
+    
     private bool _selected;
 
     public override bool Selectable => true;
@@ -13,10 +14,13 @@ public abstract class Container : Element
     public override bool Selected
     {
         get => _selected;
-        set 
+        set
         {
             _selected = value;
-            Childrens[SelectedIndex].Selected = value;
+            if (Elements.Count > 0)
+            {
+                Elements[SelectedIndex].Selected = value;
+            }
         }
     }
 
@@ -26,12 +30,12 @@ public abstract class Container : Element
 
     public override bool HandleKey(ConsoleKeyInfo key)
     {
-        if(Childrens[SelectedIndex].HandleKey(key)) return true;
+        if(Elements[SelectedIndex].HandleKey(key)) return true;
         
         switch (key.Key)
         {
             case ConsoleKey.UpArrow:
-                if (SelectedIndex > _minSelectableId)
+                if (SelectedIndex > MinSelectableId)
                 {
                     MoveSelection(-1);
                     return true;
@@ -39,7 +43,7 @@ public abstract class Container : Element
                 break;
             
             case ConsoleKey.DownArrow:
-                if (SelectedIndex < _maxSelectableId)
+                if (SelectedIndex < MaxSelectableId)
                 {
                     MoveSelection(1);
                     return true;
@@ -50,45 +54,49 @@ public abstract class Container : Element
         return false;
     }
 
-    public void AddChildren(Element child)
+    public void AddElement(Element element)
     {
-        Childrens.Add(child);
-        if (child.Selectable)
+        Elements.Add(element);
+        if (element.Selectable)
         {
-            if (_maxSelectableId == -1)
+            if (MaxSelectableId == -1)
             {
-                _minSelectableId = Childrens.Count-1;
-                SelectElement(_minSelectableId);
+                MinSelectableId = Elements.Count-1;
+                SelectElement(MinSelectableId);
             }
-            _maxSelectableId = Childrens.Count-1;
+            MaxSelectableId = Elements.Count-1;
         }
     }
     
     private void SelectElement(int index)
     {
-        Childrens[SelectedIndex].Selected = false;
-        Childrens[index].Selected = true;
-        SelectedIndex = index;
+        if (index >= 0 && Elements.Count > 0)
+        {
+            Elements[SelectedIndex].Selected = false;
+            Elements[index].Selected = true;
+            SelectedIndex = index;
+        }
     }
 
-    protected void MoveSelection(int delta)
+    protected bool MoveSelection(int delta)
     {
         var index = -1;
         if (delta > 0)
         {
-            for (int i = SelectedIndex+delta; i < Childrens.Count; i++)
+            for (int i = SelectedIndex+delta; i < Elements.Count; i++)
             {
-                if (Childrens[i].Selectable)
+                if (Elements[i].Selectable)
                 {
                     index = i;
                     break;
                 }
             }
-        }else if (delta < 0)
+        }
+        else if (delta < 0)
         {
             for (int i = SelectedIndex+delta; i >= 0; i--)
             {
-                if (Childrens[i].Selectable)
+                if (Elements[i].Selectable)
                 {
                     index = i;
                     break;
@@ -96,10 +104,13 @@ public abstract class Container : Element
             }
         }
 
-        if (index != -1)
+        if (index > -1)
         {
             SelectElement(index);
+            return true;
         }
+
+        return false;
     }
 
 }

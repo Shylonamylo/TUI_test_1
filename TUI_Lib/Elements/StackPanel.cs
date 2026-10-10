@@ -6,33 +6,36 @@ public class StackPanel : Container
 {
     public bool Horizontal { get; set; } = false;
 
-    public override Vec2I Size => new (Childrens.Max(e => e.Size.X), Childrens.Max(e => e.Size.Y));
+    public override Vec2I Size => Elements.Count > 0 ? new Vec2I(Elements.Max(e => e.Size.X),Elements.Max(e => e.Size.Y)) : new Vec2I(1,1);
 
     public override bool HandleKey(ConsoleKeyInfo key)
     {
-        if(Childrens[SelectedIndex].HandleKey(key)) return true;
+        if (Elements.Count == 0)
+        {
+            return false;
+        }
+        if (Elements[SelectedIndex].HandleKey(key))
+        {
+            return true;
+        }
         
         switch (key.Key)
         {
             case ConsoleKey.UpArrow:
-                if (SelectedIndex > _minSelectableId)
-                {
-                    MoveSelection(-1);
-                    return true;
-                }
                 
-                Childrens[SelectedIndex].Selected = false;
+                if (SelectedIndex > MinSelectableId)
+                {
+                    if(MoveSelection(-1)) return true;
+                }
                 
                 break;
             
             case ConsoleKey.DownArrow:
-                if (SelectedIndex < _maxSelectableId)
-                {
-                    MoveSelection(1);
-                    return true;
-                }
                 
-                Childrens[SelectedIndex].Selected = false;
+                if (SelectedIndex < MaxSelectableId)
+                {
+                    if(MoveSelection(1)) return true;
+                }
                 
                 break;
         }
