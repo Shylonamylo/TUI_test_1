@@ -4,9 +4,9 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class TextBlockRenderer(Canvas canvas) : IElementRenderer
+public class TextBlockRenderer : IElementRenderer
 {
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         TextBlock textBlock = (TextBlock)element;
         

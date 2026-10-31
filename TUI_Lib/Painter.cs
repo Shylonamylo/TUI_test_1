@@ -16,9 +16,9 @@ public static class Painter
         var type = element.GetType();
         try
         {
-            var renderer = TryGetRenderer(type, canvas);
+            var renderer = TryGetRenderer(type);
             
-            renderer.Render(element);
+            renderer.Render(element, canvas);
         }
         catch(Exception e)
         {
@@ -26,7 +26,7 @@ public static class Painter
         }
     }
 
-    public static IElementRenderer TryGetRenderer(Type type, Canvas canvas)
+    public static IElementRenderer TryGetRenderer(Type type)
     {
         if (_renderers.TryGetValue(type, out var elementRenderer))
         {
@@ -36,7 +36,7 @@ public static class Painter
         {
             var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
             var rendererType = _assembly.GetType($"{nameSpace}.{type.Name}Renderer");
-            IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType, canvas)!;
+            IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType)!;
             _renderers.Add(type, renderer);
             return renderer;
         }

@@ -2,7 +2,7 @@
 
 public class TextElement : Element
 {
-    public string Text { get; set; } = "";
+    public virtual string Text { get; set; } = "";
     public int MaxLength { get; set; } = 20;
     
     public int GetLinesCount()

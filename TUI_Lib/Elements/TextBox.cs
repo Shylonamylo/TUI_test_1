@@ -7,6 +7,20 @@ public class TextBox : TextBlock
     public event Action<string>? OnTextChanged;
     public event Action<ConsoleKey>? OnKeyDown;
     
+    private string _text = "";
+
+    public override string Text
+    {
+        get => _text;
+        set
+        {
+            _text = value; 
+            OnTextChanged?.Invoke(value);
+            if (_cursorPos > _text.Length) 
+                _cursorPos = _text.Length; 
+        }
+    }
+
     public override bool Selectable => true;
 
     private int _cursorPos = 0;

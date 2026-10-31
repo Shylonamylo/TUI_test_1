@@ -4,9 +4,9 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class TextBoxRenderer(Canvas canvas) : IElementRenderer
+public class TextBoxRenderer : IElementRenderer
 {
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         TextBox textBox = (TextBox)element;
         

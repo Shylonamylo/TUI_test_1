@@ -4,9 +4,9 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class UserCanvasRenderer(Canvas canvas) : IElementRenderer
+public class UserCanvasRenderer : IElementRenderer
 {
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         UserCanvas userCanvas = (UserCanvas)element;
         
