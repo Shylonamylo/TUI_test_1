@@ -18,7 +18,7 @@ public class TextBoxRenderer(Canvas canvas) : IElementRenderer
         
         int textOffset = boxHeight - linesCount < 0 ? 0 : boxHeight - linesCount;
 
-        canvas.DrawBorder(textBox.Position.X, textBox.Position.Y, textBox.Selected?textBox.Size.X+3:textBox.Size.X+2,  boxHeight, textBox.Border, textBox.Style);
+        canvas.DrawBorder(textBox.Position.X, textBox.Position.Y, textBox.Selected?textBox.Size.X+2:textBox.Size.X+1,  boxHeight, textBox.Border, textBox.Style);
         
         canvas.WriteStringWrapped(textBox.Position.X+1, textBox.Position.Y+textOffset-1, textBox.Text, textBox.MaxLength, textBox.Style);
 
