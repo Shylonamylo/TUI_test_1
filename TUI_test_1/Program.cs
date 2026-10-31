@@ -13,15 +13,40 @@ class Program
     {
         TUI ui = new TUI();
 
-        StackPanel stackPanel1 = new StackPanel();
+        StackPanel mainPanel = new StackPanel();
+        
+        Button addItemButton = new Button()
+        {
+            Label = "Добавить",
+        };
+        
+        StackPanel addInfoNamePanel = new StackPanel()
+        {
+            Horizontal = true
+        };
+        
+        TextBlock addInfoNameLabel = new TextBlock()
+        {
+            Text = "Введите название"
+        };
+        
+        TextBox addInfoNameText = new TextBox();
+        
+        StackPanel itemsPanel = new StackPanel();
 
-        TextBlock tb1 = new TextBox() { };
+        addItemButton.OnClick += () =>
+        {
+            itemsPanel.AddElement(new TextBlock(){Text = addInfoNameText.Text});
+        };
+
+        addInfoNamePanel.AddElement(addInfoNameLabel);
+        addInfoNamePanel.AddElement(addInfoNameText);
         
-        var linesCount = tb1.GetLinesCount();
+        mainPanel.AddElement(addInfoNamePanel);
+        mainPanel.AddElement(addItemButton);
+        mainPanel.AddElement(itemsPanel);
         
-        stackPanel1.AddElement(tb1);
-            
-        ui.AddElement(stackPanel1);
+        ui.AddElement(mainPanel);
         
         ui.Run();
     }
