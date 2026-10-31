@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text;
 using TUI_Lib;
 using TUI_Lib.ConsoleGraphics.Colors;
 using TUI_Lib.ConsoleGraphics.Types;
@@ -12,40 +13,15 @@ class Program
     {
         TUI ui = new TUI();
 
-        StackPanel mainPanel = new StackPanel();
-        
-        Button addItemButton = new Button()
-        {
-            Label = "Добавить",
-        };
-        
-        StackPanel addInfoNamePanel = new StackPanel()
-        {
-            Horizontal = true
-        };
-        
-        TextBlock addInfoNameLabel = new TextBlock()
-        {
-            Text = "Введите название"
-        };
-        
-        TextBox addInfoNameText = new TextBox();
-        
-        StackPanel itemsPanel = new StackPanel();
+        StackPanel stackPanel1 = new StackPanel();
 
-        addItemButton.OnClick += () =>
-        {
-            itemsPanel.AddElement(new TextBlock(){Text = addInfoNameText.Text});
-        };
-
-        addInfoNamePanel.AddElement(addInfoNameLabel);
-        addInfoNamePanel.AddElement(addInfoNameText);
+        TextBlock tb1 = new TextBox() { };
         
-        mainPanel.AddElement(addInfoNamePanel);
-        mainPanel.AddElement(addItemButton);
-        mainPanel.AddElement(itemsPanel);
+        var linesCount = tb1.GetLinesCount();
         
-        ui.AddElement(mainPanel);
+        stackPanel1.AddElement(tb1);
+            
+        ui.AddElement(stackPanel1);
         
         ui.Run();
     }

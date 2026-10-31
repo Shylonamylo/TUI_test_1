@@ -9,16 +9,26 @@ public class TextBoxRenderer(Canvas canvas) : IElementRenderer
     public void Render(Element element)
     {
         TextBox textBox = (TextBox)element;
-
-        canvas.DrawBox(textBox.Position.X, textBox.Position.Y, textBox.Selected?textBox.Text.Length+3:textBox.Text.Length+2, 3, textBox.Border.HorizontalChar, textBox.Border.VerticalChar, textBox.Style);
         
-        canvas.WriteString(textBox.Position.X+1, textBox.Position.Y+1, textBox.Text, textBox.Style);
+        int linesCount = textBox.Text.Length / textBox.MaxLength + 1;
+        
+        int boxHeight = textBox.Text.Length % textBox.MaxLength == 0 && textBox.Text.Length > 0
+            ? textBox.Size.Y + 1
+            : textBox.Size.Y;
+        
+        int textOffset = boxHeight - linesCount < 0 ? 0 : boxHeight - linesCount;
+
+        canvas.DrawBorder(textBox.Position.X, textBox.Position.Y, textBox.Selected?textBox.Size.X+3:textBox.Size.X+2,  boxHeight, textBox.Border, textBox.Style);
+        
+        canvas.WriteStringWrapped(textBox.Position.X+1, textBox.Position.Y+textOffset-1, textBox.Text, textBox.MaxLength, textBox.Style);
 
         if (!textBox.Selected) return;
         
         int cursorPos = textBox.GetCursorPos();
 
-        canvas.Set(textBox.Position.X+cursorPos+1, textBox.Position.Y+1, textBox.GetChar(cursorPos), textBox.Style.GetInverted());
+        canvas.Set(textBox.Position.X + 1 + cursorPos % textBox.MaxLength,
+            textBox.Position.Y + 1 + cursorPos / textBox.MaxLength,
+            textBox.GetChar(cursorPos), textBox.Style.GetInverted());
 
     }
 }

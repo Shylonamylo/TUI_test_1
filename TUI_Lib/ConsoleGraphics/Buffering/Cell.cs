@@ -7,6 +7,11 @@ public readonly record struct Cell
     public readonly char Char;
     public readonly Style Style;
         
+    public Cell()
+    {
+        Char = '\0';
+        Style = Style.Default;
+    }
         
     public Cell(char c, Style style)
     {

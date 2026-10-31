@@ -18,26 +18,52 @@ public class StackPanel : Container
         {
             return true;
         }
-        
-        switch (key.Key)
+
+        if (Horizontal)
         {
-            case ConsoleKey.UpArrow:
+            switch (key.Key)
+            {
+                case ConsoleKey.LeftArrow:
                 
-                if (SelectedIndex > MinSelectableId)
-                {
-                    if(MoveSelection(-1)) return true;
-                }
+                    if (SelectedIndex > MinSelectableId)
+                    {
+                        if(MoveSelection(-1)) return true;
+                    }
                 
-                break;
+                    break;
             
-            case ConsoleKey.DownArrow:
+                case ConsoleKey.RightArrow:
                 
-                if (SelectedIndex < MaxSelectableId)
-                {
-                    if(MoveSelection(1)) return true;
-                }
+                    if (SelectedIndex < MaxSelectableId)
+                    {
+                        if(MoveSelection(1)) return true;
+                    }
                 
-                break;
+                    break;
+            }
+        }
+        else
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                
+                    if (SelectedIndex > MinSelectableId)
+                    {
+                        if(MoveSelection(-1)) return true;
+                    }
+                
+                    break;
+            
+                case ConsoleKey.DownArrow:
+                
+                    if (SelectedIndex < MaxSelectableId)
+                    {
+                        if(MoveSelection(1)) return true;
+                    }
+                
+                    break;
+            }
         }
         
         return false;

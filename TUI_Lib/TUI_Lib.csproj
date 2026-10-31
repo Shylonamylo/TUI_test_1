@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>Shylonamylo.Tui</PackageId>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
         <Title>TUI from Shylonamylo</Title>
         <Authors>Shylonamylo</Authors>
         <Description>Simple TUI framework</Description>

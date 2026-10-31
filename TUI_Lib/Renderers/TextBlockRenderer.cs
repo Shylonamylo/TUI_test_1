@@ -10,7 +10,10 @@ public class TextBlockRenderer(Canvas canvas) : IElementRenderer
     {
         TextBlock textBlock = (TextBlock)element;
         
-        canvas.DrawBox(textBlock.Position.X, textBlock.Position.Y, textBlock.Text.Length+2, 3, textBlock.Border.HorizontalChar, textBlock.Border.VerticalChar, textBlock.Style);
-        canvas.WriteString(textBlock.Position.X+1, textBlock.Position.Y+1, textBlock.Text, textBlock.Style);
+        canvas.DrawBorder(textBlock.Position.X, textBlock.Position.Y, textBlock.Size.X, textBlock.Size.Y, textBlock.Border, textBlock.Style);
+        
+        int textOffset = textBlock.Size.Y - textBlock.GetLinesCount() < 0 ? 0 : textBlock.Size.Y - textBlock.GetLinesCount();
+        
+        canvas.WriteStringWrapped(textBlock.Position.X+1, textBlock.Position.Y+textOffset-1, textBlock.Text, textBlock.MaxLength, textBlock.Style);
     }
 }

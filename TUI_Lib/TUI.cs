@@ -14,7 +14,7 @@ public class TUI
     
     private readonly List<Element> _elements = new();
 
-    private int _maxSelectableId = 0;
+    private int _maxSelectableId = -1;
     private int _minSelectableId = 0;
     
     public TUI()
@@ -28,6 +28,23 @@ public class TUI
         
         while (!cts.IsCancellationRequested)
         {
+
+            if (SizeChanged())
+            {
+                _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
+                
+                try
+                {
+                    Console.Clear();
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                Console.CursorVisible = false;
+            }
+            
             while(Console.KeyAvailable)
             {
                 var key = Console.ReadKey(true);
@@ -38,6 +55,13 @@ public class TUI
 
             Thread.Sleep(16);
         }
+    }
+
+    private bool SizeChanged()
+    {
+        return (_canvas.Width != Console.WindowWidth || _canvas.Height != Console.WindowHeight)
+               && Console.WindowWidth > 0 
+               && Console.WindowHeight > 0;
     }
 
     private void SelectElement(int index)
