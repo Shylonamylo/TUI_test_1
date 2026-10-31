@@ -24,6 +24,11 @@ class Program
         {
             Horizontal = true
         };
+
+        TextBlock fpsCounter = new TextBlock()
+        {
+            Text = ui.FPS.ToString()
+        };
         
         TextBlock addInfoNameLabel = new TextBlock()
         {
@@ -39,9 +44,15 @@ class Program
             itemsPanel.AddElement(new TextBlock(){Text = addInfoNameText.Text});
         };
 
+        ui.OnTick += (dt) =>
+        {
+            fpsCounter.Text = ui.FPS.ToString();
+        };
+
         addInfoNamePanel.AddElement(addInfoNameLabel);
         addInfoNamePanel.AddElement(addInfoNameText);
         
+        mainPanel.AddElement(fpsCounter);
         mainPanel.AddElement(addInfoNamePanel);
         mainPanel.AddElement(addItemButton);
         mainPanel.AddElement(itemsPanel);
