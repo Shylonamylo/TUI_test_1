@@ -9,7 +9,7 @@ public readonly record struct Cell
         
     public Cell()
     {
-        Char = '\0';
+        Char = ' ';
         Style = Style.Default;
     }
         

@@ -11,6 +11,7 @@ public class TUI
     private CancellationTokenSource cts = new();
 
     public event Action<double>? OnTick;
+    public event Action<ConsoleKeyInfo>? OnKeyAvalible;
     
     public int SelectedIndex = 0;
     
@@ -60,6 +61,9 @@ public class TUI
             while(Console.KeyAvailable)
             {
                 var key = Console.ReadKey(true);
+                
+                OnKeyAvalible?.Invoke(key);
+                
                 HandleKey(key);
             }
             
@@ -168,5 +172,6 @@ public class TUI
     {
         cts.Cancel();
         cts.Dispose();
+        Console.ReadLine();
     }
 }

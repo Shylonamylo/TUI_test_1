@@ -1,8 +1,9 @@
 ﻿using TUI_Lib.ConsoleGraphics.Colors;
+using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.ConsoleGraphics.Buffering;
 
-public class Canvas
+public class Canvas: IDrawableCanvas
 {
     private Cell[,] _currentCanvas;
     private Cell[,] _previousCanvas;
@@ -18,13 +19,20 @@ public class Canvas
         Resize(width, height);
     }
 
-    private void Clear()
+    public void Clear()
     {
+        Fill(' ', Style.Default);
+    }
+
+    public void Fill(char c, Style style)
+    {
+        var emptyCell = new Cell(c, style);
+        
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                Set(x, y, '\0', Style.DefaultInverted);
+                _currentCanvas[x, y] = emptyCell;
             }
         }
     }
@@ -35,7 +43,7 @@ public class Canvas
         Clear();
     }
 
-    public bool Set(int x, int y, char c, Style style)
+    public bool SetCell(int x, int y, char c, Style style)
     {
         if (x >= 0 && x < Width && y >= 0 && y < Height)
         {
@@ -49,8 +57,12 @@ public class Canvas
         }
     }
 
-    public Cell GetPixel(int x, int y)
+    public Cell GetCell(int x, int y)
     {
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+        {
+            return new Cell();
+        }
         return _currentCanvas[x, y];
     }
 
