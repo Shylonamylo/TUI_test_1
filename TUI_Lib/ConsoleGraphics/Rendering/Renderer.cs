@@ -6,12 +6,23 @@ public static class Renderer
 {
     public static void Draw(Canvas canvas)
     {
-        for (int x = 0; x < canvas.Width; x++)
+        int maxX = Math.Min(canvas.Width, Console.BufferWidth);
+        int maxY = Math.Min(canvas.Height, Console.BufferHeight);
+        
+        for (int x = 0; x < maxX; x++)
         {
-            for (int y = 0; y < canvas.Height; y++)
+            for (int y = 0; y < maxY; y++)
             {
                 if(!canvas.HasChanged(x, y)) continue;
-                Console.SetCursorPosition(x, y);
+                
+                try
+                {
+                    Console.SetCursorPosition(x, y);
+                }
+                catch
+                {
+                    continue;
+                }
                 
                 Cell cell = canvas.GetPixel(x, y);
 

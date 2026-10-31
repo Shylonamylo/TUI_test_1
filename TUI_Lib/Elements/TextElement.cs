@@ -3,4 +3,11 @@
 public class TextElement : Element
 {
     public string Text { get; set; } = "";
+    public int MaxLength { get; set; } = 20;
+    
+    public int GetLinesCount()
+    {
+        var result = (Text.Length + MaxLength-1) / MaxLength;
+        return result == 0 ? 1 : result;
+    }
 }

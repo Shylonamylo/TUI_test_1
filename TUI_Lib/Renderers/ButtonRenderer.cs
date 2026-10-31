@@ -11,7 +11,10 @@ public class ButtonRenderer(Canvas canvas) : IElementRenderer
     {
         Button button = (Button)element;
 
-        canvas.DrawBox(button.Position.X, button.Position.Y, button.Label.Length+2, 3, button.Border.HorizontalChar, button.Border.VerticalChar, button.Style);
-        canvas.WriteString(button.Position.X+1, button.Position.Y+1, $"{button.Label}", button.Selected?button.Style.GetInverted():button.Style);
+        canvas.DrawBorder(button.Position.X, button.Position.Y, button.Label.Length+2, button.Size.Y, button.Border, button.Style);
+
+        int textOffset = button.Size.Y - 2 < 0 ? 0 : 1;
+        
+        canvas.WriteString(button.Position.X+1, button.Position.Y+textOffset, $"{button.Label}", button.Selected?button.Style.GetInverted():button.Style);
     }
 }

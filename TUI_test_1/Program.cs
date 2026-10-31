@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text;
 using TUI_Lib;
 using TUI_Lib.ConsoleGraphics.Colors;
 using TUI_Lib.ConsoleGraphics.Types;

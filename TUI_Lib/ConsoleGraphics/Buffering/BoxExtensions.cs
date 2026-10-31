@@ -3,14 +3,14 @@ using TUI_Lib.Elements;
 
 namespace TUI_Lib.ConsoleGraphics.Buffering;
 
-public static class BoxExtension
+public static class BoxExtensions
 {
     public static void DrawBox(this Canvas canvas, int x, int y, int width, int height, char horizontalChar, char verticalChar, Style style)
     {
         for (int i = 0; i < width; i++)
         {
             canvas.Set(x+i, y, horizontalChar, style);
-            canvas.Set(x+i, y+2, horizontalChar, style);
+            canvas.Set(x+i, y+height-1, horizontalChar, style);
         }
         for (int i = 1; i < height-1; i++)
         {

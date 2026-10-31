@@ -7,5 +7,20 @@ public class TextBlock : TextElement
 {
     public Border? Border { get; set; } = Border.Default;
     public override bool Selectable => false;
-    public override Vec2I Size => Border!=null ? new Vec2I(Text.Length+2, 3) : new Vec2I(Text.Length, 1);
+    public override Vec2I Size
+    {
+        get
+        {
+            if (Border == null)
+                return new Vec2I(MaxLength, GetLinesCount());
+            
+            else if (Border.FullSize)
+                
+                return new Vec2I(MaxLength + 2, GetLinesCount()+2);
+            
+            else 
+            
+                return new Vec2I(MaxLength + 2, GetLinesCount());
+        }
+    }
 }

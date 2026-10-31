@@ -12,8 +12,19 @@ public class Button : Element
 
     public Border? Border { get; set; } = Border.Default;
     
-    public override Vec2I Size => Border==null?new Vec2I(Label.Length, 1):new Vec2I(Label.Length+2, 3); 
-    
+    public override Vec2I Size
+    {
+        get
+        {
+            if (Border == null)
+                return new Vec2I(Label.Length, 1);
+            else if (Border.FullSize)
+                return new Vec2I(Label.Length + 2, 3);
+            else
+                return new Vec2I(Label.Length + 2, 1);
+        }
+    }
+
     public override bool HandleKey(ConsoleKeyInfo key){
         
         if (key.Key != ConsoleKey.Enter) return false;
