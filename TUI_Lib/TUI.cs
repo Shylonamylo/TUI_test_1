@@ -1,4 +1,5 @@
-﻿using TUI_Lib.ConsoleGraphics;
+﻿using System.Diagnostics;
+using TUI_Lib.ConsoleGraphics;
 using TUI_Lib.ConsoleGraphics.Buffering;
 using TUI_Lib.ConsoleGraphics.Rendering;
 using TUI_Lib.Elements;
@@ -8,7 +9,14 @@ namespace TUI_Lib;
 public class TUI
 {
     private CancellationTokenSource cts = new();
+
+    public event Action<double>? OnTick;
+    
     public int SelectedIndex = 0;
+    
+    public int RequiredFPS { get; set; } = 60;
+    
+    public int FPS { get; private set; } = 0;
 
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
     
@@ -25,9 +33,14 @@ public class TUI
     {
         Console.CursorVisible = false;
         SelectElement(_minSelectableId);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        
+        stopwatch.Start();
         
         while (!cts.IsCancellationRequested)
         {
+
+            var startTime = stopwatch.Elapsed.TotalSeconds;
 
             if (SizeChanged())
             {
@@ -36,13 +49,12 @@ public class TUI
                 try
                 {
                     Console.Clear();
+                    Console.CursorVisible = false;
                 }
                 catch
                 {
                     // ignored
                 }
-
-                Console.CursorVisible = false;
             }
             
             while(Console.KeyAvailable)
@@ -53,7 +65,20 @@ public class TUI
             
             Render();
 
-            Thread.Sleep(16);
+            var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+            var sleepTime = (1.0 / RequiredFPS) - frameTime;
+
+            if (sleepTime > 0)
+            {
+                Thread.Sleep((int)(sleepTime*1000));
+            }
+            
+            var deltaTime = stopwatch.Elapsed.TotalSeconds - startTime;
+            
+            OnTick?.Invoke(deltaTime);
+
+            FPS = (int)(1.0 / deltaTime);
+
         }
     }
 
