@@ -5,9 +5,9 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class StackPanelRenderer(Canvas canvas) : IElementRenderer
+public class StackPanelRenderer : IElementRenderer
 {
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         StackPanel stackPanel = (StackPanel)element;
         if (stackPanel.Horizontal)

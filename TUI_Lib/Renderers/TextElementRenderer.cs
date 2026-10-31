@@ -7,10 +7,10 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class TextElementRenderer(Canvas canvas) :  IElementRenderer
+public class TextElementRenderer :  IElementRenderer
 {
     
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         TextElement textElement = (TextElement)element;
         canvas.WriteString(textElement.Position.X, textElement.Position.Y, textElement.Text, textElement.Style);

@@ -5,9 +5,9 @@ using TUI_Lib.Interfaces;
 
 namespace TUI_Lib.Renderers;
 
-public class ButtonRenderer(Canvas canvas) : IElementRenderer
+public class ButtonRenderer : IElementRenderer
 {
-    public void Render(Element element)
+    public void Render(Element element, Canvas canvas)
     {
         Button button = (Button)element;
 
