@@ -26,7 +26,7 @@ public class TextBoxRenderer(Canvas canvas) : IElementRenderer
         
         int cursorPos = textBox.GetCursorPos();
 
-        canvas.Set(textBox.Position.X + 1 + cursorPos % textBox.MaxLength,
+        canvas.SetCell(textBox.Position.X + 1 + cursorPos % textBox.MaxLength,
             textBox.Position.Y + 1 + cursorPos / textBox.MaxLength,
             textBox.GetChar(cursorPos), textBox.Style.GetInverted());
 
