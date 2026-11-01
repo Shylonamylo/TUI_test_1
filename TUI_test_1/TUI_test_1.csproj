@@ -11,4 +11,14 @@
       <ProjectReference Include="..\TUI_Lib\TUI_Lib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Examples\Sounds\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Examples\Sounds\otskok.wav">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

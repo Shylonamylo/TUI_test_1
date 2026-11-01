@@ -21,12 +21,13 @@ class Program
         TextBlock hello = new TextBlock()
         {
             Text = "Выберите желаемый пример: ",
-            MaxLength = 50
+            MaxLength = 10
         };
 
         Button basic = new Button()
         {
-            Label = "Кнопка, текст бокс и текст блок"
+            Label = "Кнопка, текст бокс и текст блок",
+            Border = new Border('&', '%', '+', '+', '+', '+')
         };
 
         Button dynamicElementsAddition = new Button()
@@ -36,9 +37,14 @@ class Program
 
         Button pingPing = new Button()
         {
-            Label = "Работа с UserCanvas в виде игры PingPong!"
+            Label = "Работа с UserCanvas в виде игры PingPong! (кроссплатформенная)"
         };
 
+        Button pingPingWin = new Button()
+        {
+            Label = "Работа с UserCanvas в виде игры PingPong! (версия для Windows)"
+        };
+        
         basic.OnClick += () =>
         {
             new BasicInterfaceExample().Run();
@@ -56,11 +62,18 @@ class Program
             new PongExample().Run();
             _ui.Stop();
         };
+
+        pingPingWin.OnClick += () =>
+        {
+            new PongExampleWindowsVer().Run();
+            _ui.Stop();
+        };
         
         stackPanel.AddElement(hello);
         stackPanel.AddElement(basic);
         stackPanel.AddElement(dynamicElementsAddition);
         stackPanel.AddElement(pingPing);
+        stackPanel.AddElement(pingPingWin);
         
         _ui.AddElement(stackPanel);
         
