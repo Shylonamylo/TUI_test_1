@@ -17,7 +17,8 @@ public class TextBox : TextBlock
             _text = value; 
             OnTextChanged?.Invoke(value);
             if (_cursorPos > _text.Length) 
-                _cursorPos = _text.Length; 
+                _cursorPos = _text.Length;
+            Invalidate();
         }
     }
 

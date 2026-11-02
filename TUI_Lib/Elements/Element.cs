@@ -18,7 +18,6 @@ public abstract class Element
     public virtual void Invalidate()
     {
         Parent?.Invalidate();
-        IsDirty = false;
     }
     public virtual bool HandleKey(ConsoleKeyInfo key) => false;
 }
