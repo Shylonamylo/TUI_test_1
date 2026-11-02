@@ -24,6 +24,12 @@ public abstract class Container : Element
         }
     }
 
+    public override void Invalidate()
+    {
+        IsDirty = true;
+        base.Invalidate();
+    }
+
     public int SelectedIndex { get; private set; }
 
     public Border? Border { get; set; }
@@ -56,6 +62,7 @@ public abstract class Container : Element
 
     public void AddElement(Element element)
     {
+        element.Parent = this;
         Elements.Add(element);
         if (element.Selectable)
         {
@@ -66,6 +73,7 @@ public abstract class Container : Element
             }
             MaxSelectableId = Elements.Count-1;
         }
+        Invalidate();
     }
     
     private void SelectElement(int index)

@@ -5,7 +5,17 @@ namespace TUI_Lib.Elements;
 
 public class Button : Element
 {
-    public string Label { get; set; } = "Button";
+    private string _label = "Button";
+
+    public string Label
+    {
+        get => _label;
+        set
+        {
+            _label = value;
+            Invalidate();
+        }
+    }
     public event Action? OnClick;
 
     public override bool Selectable => true;
@@ -31,10 +41,5 @@ public class Button : Element
         
         OnClick?.Invoke();
         return true;
-    }
-    
-    public Button()
-    {
-        
     }
 }

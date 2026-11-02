@@ -9,8 +9,6 @@ public class DynamicElementsExample
 
     public void Run()
     {
-        Console.Clear();
-        
         StackPanel mainPanel = new StackPanel();
         StackPanel listPanel = new StackPanel();
 
