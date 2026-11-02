@@ -8,7 +8,7 @@ public class TextBox : TextBlock
     public event Action<ConsoleKey>? OnKeyDown;
     
     private string _text = "";
-
+    
     public override string Text
     {
         get => _text;
@@ -39,7 +39,7 @@ public class TextBox : TextBlock
                 break;
             
             case ConsoleKey.RightArrow:
-                _cursorPos = _cursorPos<Text.Length?_cursorPos+1:_cursorPos;
+                _cursorPos = _cursorPos<Text.Length?_cursorPos+1:Text.Length;
                 handled = true;
                 break;
             
@@ -75,18 +75,36 @@ public class TextBox : TextBlock
 
     private void InsertChar(char character)
     {
-        Text = Text.Insert(_cursorPos, character.ToString());
-        _cursorPos++;
-        OnTextChanged?.Invoke(Text);
+        if (_cursorPos >= 0)
+        {
+            Text = Text.Insert(_cursorPos, character.ToString());
+            _cursorPos++;
+            OnTextChanged?.Invoke(Text);
+        }
+        else
+        {
+            _cursorPos = 0;
+        }
     }
     private void RemoveChar(int position)
     {
         if (Text.Length > 0 && position > 0 && position < Text.Length+1)
         {
             List<char> _text = Text.ToList();
+            
+            if (_cursorPos >= Text.Length)
+            {
+                _cursorPos = Text.Length;
+            }
+            else
+            {
+                _cursorPos--;
+            }
+            
             _text.RemoveAt(position-1);
+            
             Text = new string(_text.ToArray());
-            _cursorPos--;
+            
             OnTextChanged?.Invoke(Text);
         }
     }
