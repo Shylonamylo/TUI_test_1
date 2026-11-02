@@ -24,6 +24,11 @@ public abstract class Container : Element
         }
     }
 
+    public override void Invalidate()
+    {
+        IsDirty = true;
+    }
+
     public int SelectedIndex { get; private set; }
 
     public Border? Border { get; set; }
