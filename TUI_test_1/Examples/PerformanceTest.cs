@@ -90,7 +90,7 @@ public class PerformanceTest
         _currentFps.Text = $"Текущий ФПС: {_ui.FPS.ToString()}";
         _currentFps.MaxLength = _currentFps.Text.Length;
 
-        _currentRamUsage.Text = $"Текущее потребление ОЗУ: {process.PrivateMemorySize64/1000000f}";
+        _currentRamUsage.Text = $"Текущее потребление ОЗУ: {process.PrivateMemorySize64/1000000f} МБ";
         _currentRamUsage.MaxLength = _currentRamUsage.Text.Length;
     }
 }
