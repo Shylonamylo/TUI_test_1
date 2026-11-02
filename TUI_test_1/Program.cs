@@ -38,6 +38,11 @@ class Program
         {
             Label = "Работа с UserCanvas в виде игры PingPong!"
         };
+        
+        Button performanceTest = new Button()
+        {
+            Label = "Стресс тест"
+        };
 
         basic.OnClick += () =>
         {
@@ -56,11 +61,18 @@ class Program
             new PongExample().Run();
             _ui.Stop();
         };
+
+        performanceTest.OnClick += () =>
+        {
+            new PerformanceTest().Run();
+            _ui.Stop();
+        };
         
         stackPanel.AddElement(hello);
         stackPanel.AddElement(basic);
         stackPanel.AddElement(dynamicElementsAddition);
         stackPanel.AddElement(pingPing);
+        stackPanel.AddElement(performanceTest);
         
         _ui.AddElement(stackPanel);
         
