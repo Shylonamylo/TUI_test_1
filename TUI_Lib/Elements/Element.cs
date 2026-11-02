@@ -12,6 +12,13 @@ public abstract class Element
     public virtual bool Selectable { get; set; } = true;
     public virtual bool Selected { get; set; }
     public Style Style { get; set; } = Style.Default;
-    
+    public bool IsDirty { get; set; } = true;
+    public Element? Parent { get; set; }
+
+    public virtual void Invalidate()
+    {
+        Parent?.Invalidate();
+        IsDirty = false;
+    }
     public virtual bool HandleKey(ConsoleKeyInfo key) => false;
 }
