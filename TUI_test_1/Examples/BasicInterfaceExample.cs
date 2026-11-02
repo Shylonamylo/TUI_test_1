@@ -10,8 +10,6 @@ public class BasicInterfaceExample
 
     public void Run()
     {
-        Console.Clear();
-        
         StackPanel mainPanel = new StackPanel();
 
         TextBlock title = new TextBlock

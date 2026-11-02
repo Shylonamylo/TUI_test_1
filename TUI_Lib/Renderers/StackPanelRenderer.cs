@@ -19,6 +19,9 @@ public class StackPanelRenderer : IElementRenderer
                 Element renderedChildElement = childElement;
                 Vec2I position = new(offsetX, offsetY);
                 renderedChildElement.Position = position;
+                
+                if(offsetX>canvas.Width){break;}
+                
                 offsetX += childElement.Size.X+1;
                 Painter.Paint(renderedChildElement, canvas);
             }
@@ -32,6 +35,9 @@ public class StackPanelRenderer : IElementRenderer
                 Element renderedChildElement = childElement;
                 Vec2I position = new(offsetX, offsetY);
                 renderedChildElement.Position = position;
+                
+                if(offsetY>canvas.Height){break;}
+                
                 offsetY += childElement.Size.Y;
                 Painter.Paint(renderedChildElement, canvas);
             }

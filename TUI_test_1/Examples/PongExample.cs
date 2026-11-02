@@ -31,8 +31,6 @@ public class PongExample
 
     public void Run()
     {
-        Console.Clear();
-
         _racketSizeHalf = _racketSize / 2;
         
         ResetBall();

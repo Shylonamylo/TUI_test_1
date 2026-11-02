@@ -32,7 +32,10 @@ public class TUI
     
     public void Run()
     {
+        Console.SetCursorPosition(0, 0);
+        Console.Clear();
         Console.CursorVisible = false;
+
         SelectElement(_minSelectableId);
         Stopwatch stopwatch = Stopwatch.StartNew();
         
@@ -40,7 +43,6 @@ public class TUI
         
         while (!cts.IsCancellationRequested)
         {
-
             var startTime = stopwatch.Elapsed.TotalSeconds;
 
             if (SizeChanged())
@@ -172,6 +174,5 @@ public class TUI
     {
         cts.Cancel();
         cts.Dispose();
-        Console.ReadLine();
     }
 }

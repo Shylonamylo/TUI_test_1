@@ -8,8 +8,8 @@ public static class Renderer
 {
     public static void Draw(Canvas canvas)
     {
-        int maxX = Math.Min(canvas.Width, Console.BufferWidth);
-        int maxY = Math.Min(canvas.Height, Console.BufferHeight);
+        int maxX = Math.Min(canvas.Width, Console.BufferWidth - 1);
+        int maxY = Math.Min(canvas.Height, Console.BufferHeight - 1);
         
         StringBuilder stringBuilder = new StringBuilder();
 
