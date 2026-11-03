@@ -12,16 +12,17 @@ public static class Painter
     public static void Paint(Element element, Canvas canvas)
     {
         var type = element.GetType();
-        try
-        {
-            var renderer = TryGetRenderer(type);
-            
-            renderer.Render(element, canvas);
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        
+        var renderer = TryGetRenderer(type);
+        
+        renderer.Render(element, canvas);
+    }
+
+    public static void RegisterRenderer<T, TRenderer>()
+        where T : Element
+        where TRenderer : IElementRenderer, new()
+    {
+        _renderers[typeof(T)] = new TRenderer();
     }
 
     public static IElementRenderer TryGetRenderer(Type type)
@@ -33,7 +34,12 @@ public static class Painter
         else
         {
             var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
-            var rendererType = type.Assembly.GetType($"{nameSpace}.{type.Name}Renderer");
+            var rendererTypeName = $"{nameSpace}.{type.Name}Renderer";
+            var rendererType = type.Assembly.GetType(rendererTypeName);
+            
+            if (rendererType == null)
+                throw new NotSupportedException($"Нет рендерера {rendererTypeName} для {type.Name}");
+            
             IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType)!;
             _renderers.Add(type, renderer);
             return renderer;
