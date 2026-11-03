@@ -13,68 +13,80 @@ class Program
     {
         RequiredFPS = 100
     };
+
+    private static readonly StackPanel _stackPanel = new StackPanel();
+
+    private static readonly TextBlock _hello = new TextBlock()
+    {
+        Text = "Выберите желаемый пример: ",
+        MaxLength = 50
+    };
+
+    private static readonly Button _basic = new Button()
+    {
+        Label = "Кнопка, текст бокс и текст блок"
+    };
+
+    private static readonly Button _dynamicElementsAddition = new Button()
+    {
+        Label = "Добавление элементов в процессе работы"
+    };
+
+    private static readonly Button _pingPing = new Button()
+    {
+        Label = "Работа с UserCanvas в виде игры PingPong!"
+    };
+
+    private static readonly Button _performanceTest = new Button()
+    {
+        Label = "Стресс тест"
+    };
+
+    private static readonly Button _customElement = new Button()
+    {
+        Label = "Кастомный элемент"
+    };
     
     static void Main(string[] args)
     {
-        StackPanel stackPanel = new StackPanel();
-        
-        TextBlock hello = new TextBlock()
-        {
-            Text = "Выберите желаемый пример: ",
-            MaxLength = 50
-        };
-
-        Button basic = new Button()
-        {
-            Label = "Кнопка, текст бокс и текст блок"
-        };
-
-        Button dynamicElementsAddition = new Button()
-        {
-            Label = "Добавление элементов в процессе работы"
-        };
-
-        Button pingPing = new Button()
-        {
-            Label = "Работа с UserCanvas в виде игры PingPong!"
-        };
-        
-        Button performanceTest = new Button()
-        {
-            Label = "Стресс тест"
-        };
-
-        basic.OnClick += () =>
+        _basic.OnClick += () =>
         {
             new BasicInterfaceExample().Run();
             _ui.Stop();
         };
 
-        dynamicElementsAddition.OnClick += () =>
+        _dynamicElementsAddition.OnClick += () =>
         {
             new DynamicElementsExample().Run();
             _ui.Stop();
         };
         
-        pingPing.OnClick += () =>
+        _pingPing.OnClick += () =>
         {
             new PongExample().Run();
             _ui.Stop();
         };
 
-        performanceTest.OnClick += () =>
+        _performanceTest.OnClick += () =>
         {
             new PerformanceTest().Run();
             _ui.Stop();
         };
+
+        _customElement.OnClick += () =>
+        {
+            new CustomElementExample().Run();
+            _ui.Stop();
+        };
         
-        stackPanel.AddElement(hello);
-        stackPanel.AddElement(basic);
-        stackPanel.AddElement(dynamicElementsAddition);
-        stackPanel.AddElement(pingPing);
-        stackPanel.AddElement(performanceTest);
+        _stackPanel.AddElement(_hello);
+        _stackPanel.AddElement(_basic);
+        _stackPanel.AddElement(_dynamicElementsAddition);
+        _stackPanel.AddElement(_pingPing);
+        _stackPanel.AddElement(_performanceTest);
+        _stackPanel.AddElement(_customElement);
         
-        _ui.AddElement(stackPanel);
+        _ui.AddElement(_stackPanel);
         
         _ui.Run();
 

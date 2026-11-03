@@ -5,17 +5,14 @@ namespace TUI_Lib.ConsoleGraphics.Buffering;
 
 public class Canvas: IDrawableCanvas
 {
-    private Cell[,] _currentCanvas;
-    private Cell[,] _previousCanvas;
+    private Cell[,] _currentCanvas = new Cell[1,1];
+    private Cell[,] _previousCanvas = new Cell[1,1];
     
     public int Width { get; private set; }
     public int Height { get; private set; }
 
     public Canvas(int width, int height)
     {
-        Width = width;
-        Height = height;
-        
         Resize(width, height);
     }
 
