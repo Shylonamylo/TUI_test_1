@@ -7,8 +7,6 @@ namespace TUI_Lib;
 
 public static class Painter
 {
-    private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
-    
     private static Dictionary<Type, IElementRenderer> _renderers = new();
     
     public static void Paint(Element element, Canvas canvas)
@@ -35,7 +33,7 @@ public static class Painter
         else
         {
             var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
-            var rendererType = _assembly.GetType($"{nameSpace}.{type.Name}Renderer");
+            var rendererType = type.Assembly.GetType($"{nameSpace}.{type.Name}Renderer");
             IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType)!;
             _renderers.Add(type, renderer);
             return renderer;
