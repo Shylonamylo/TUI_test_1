@@ -12,16 +12,10 @@ public static class Painter
     public static void Paint(Element element, Canvas canvas)
     {
         var type = element.GetType();
-        try
-        {
-            var renderer = TryGetRenderer(type);
-            
-            renderer.Render(element, canvas);
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        
+        var renderer = TryGetRenderer(type);
+        
+        renderer.Render(element, canvas);
     }
 
     public static void RegisterRenderer<T, TRenderer>()
