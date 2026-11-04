@@ -31,18 +31,25 @@ public static class Painter
         {
             return elementRenderer;
         }
-        else
+        
+        Type? elementType = type;
+        while (elementType != null)
         {
-            var nameSpace = type.Namespace?.Replace(".Elements", ".Renderers");
-            var rendererTypeName = $"{nameSpace}.{type.Name}Renderer";
-            var rendererType = type.Assembly.GetType(rendererTypeName);
-            
+            var nameSpace = elementType.Namespace?.Replace(".Elements", ".Renderers");
+            var rendererTypeName = $"{nameSpace}.{elementType.Name}Renderer";
+            var rendererType = elementType.Assembly.GetType(rendererTypeName);
+
             if (rendererType == null)
-                throw new NotSupportedException($"Нет рендерера {rendererTypeName} для {type.Name}");
-            
+            {
+                elementType = elementType.BaseType;
+                continue;
+            }
+        
             IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType)!;
             _renderers.Add(type, renderer);
             return renderer;
         }
+        
+        throw new NotSupportedException($"Нет рендерера для {type.Name}");
     }
 }
