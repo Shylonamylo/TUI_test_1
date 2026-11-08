@@ -12,8 +12,10 @@ public class TUI
 
     public event Action<double>? OnTick;
     public event Action<ConsoleKeyInfo>? OnKeyAvailable;
+
+    private List<int> _removeList = new();
     
-    public int SelectedIndex = 0;
+    public int SelectedIndex { get; private set; } = 0;
     
     public int RequiredFPS { get; set; } = 60;
     
@@ -24,7 +26,7 @@ public class TUI
     private readonly List<Element> _elements = new();
 
     private int _maxSelectableId = -1;
-    private int _minSelectableId = 0;
+    private int _minSelectableId = -1;
     
     public TUI()
     {
@@ -59,6 +61,56 @@ public class TUI
                     // ignored
                 }
             }
+
+            if (_removeList.Count > 0)
+            {
+                bool needToRecalculate = false;
+                foreach (var element in _removeList)
+                {
+                    Element? elementToRemove = _elements.Find(e => e.Id == element);
+
+                    if (elementToRemove == null)
+                    {
+                        continue;
+                    }
+                
+                    int indexToRemove = _elements.IndexOf(elementToRemove);
+                    
+                    _elements.Remove(elementToRemove);
+                
+                    if (_elements.Count == 0) {
+                        SelectedIndex = -1;
+                        break;
+                    }
+
+                    if (SelectedIndex > indexToRemove)
+                    {
+                        SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
+                    }
+                
+                    if (elementToRemove.Selected)
+                    {
+                        needToRecalculate = true;
+                    }
+                }
+                if (needToRecalculate)
+                {
+                    RecalculateIndexes();
+                    
+                    int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                    if (nearestSelectableElement != -1)
+                    {
+                        SelectElement(nearestSelectableElement);
+                    }
+                    else
+                    {
+                        SelectedIndex = -1;
+                    }
+                }
+            }
+            
+            _removeList.Clear();
             
             while(Console.KeyAvailable)
             {
@@ -68,8 +120,9 @@ public class TUI
                 
                 HandleKey(key);
             }
-            
-            Render();
+
+            UpdateElements();
+            RenderElements();
 
             var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
             var sleepTime = (1.0 / RequiredFPS) - frameTime;
@@ -87,6 +140,36 @@ public class TUI
 
         }
     }
+    private int SearchNearestSelectableElement(int pos)
+    {
+        if (_elements.Count == 0) return -1;
+        
+        pos = Math.Clamp(pos, 0, _elements.Count - 1); 
+        
+        int nearestSelectableElement = -1;
+        
+        for (int i = 0; i < _elements.Count; i++)
+        {
+            if (pos - i >= 0)
+            {
+                if (_elements[pos - i].Selectable)
+                {
+                    nearestSelectableElement = pos - i;
+                    break;
+                }
+            }
+            if (pos + i < _elements.Count)
+            {
+                if (_elements[pos + i].Selectable)
+                {
+                    nearestSelectableElement = pos + i;
+                    break;
+                }
+            }
+        }
+
+        return nearestSelectableElement;
+    }
 
     private bool SizeChanged()
     {
@@ -97,9 +180,15 @@ public class TUI
 
     private void SelectElement(int index)
     {
-        _elements[SelectedIndex].Selected = false;
-        _elements[index].Selected = true;
-        SelectedIndex = index;
+        if (index >= 0 && _elements.Count > 0 && index < _elements.Count)
+        { 
+            if (SelectedIndex >= 0 && SelectedIndex < _elements.Count)
+            {
+                _elements[SelectedIndex].Selected = false;
+            }
+            _elements[index].Selected = true;
+            SelectedIndex = index;
+        }
     }
     
     private void MoveSelection(int delta)
@@ -135,32 +224,58 @@ public class TUI
 
     public void HandleKey(ConsoleKeyInfo key)
     {
-        if(_elements[SelectedIndex].HandleKey(key)) return;
-        switch (key.Key)
+        if (_elements.Count > 0 && SelectedIndex >= 0 && SelectedIndex < _elements.Count)
         {
-            case ConsoleKey.UpArrow:
-                MoveSelection(-1);
-                break;
-            case ConsoleKey.DownArrow:
-                MoveSelection(1);
-                break;
+            if(_elements[SelectedIndex].HandleKey(key)) return;
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    MoveSelection(-1);
+                    break;
+                case ConsoleKey.DownArrow:
+                    MoveSelection(1);
+                    break;
+            }
+        }
+    }
+    
+    private void RecalculateIndexes()
+    {
+        _maxSelectableId = -1;
+        _minSelectableId = -1;
+        
+        for (int i = 0; i < _elements.Count; i++)
+        {
+            if (_minSelectableId == -1)
+            {
+                if (_elements[i].Selectable)
+                {
+                    _minSelectableId = i;
+                }
+            }
+            if (_elements[i].Selectable)
+            {
+                _maxSelectableId = i;
+            }
         }
     }
     
     public void AddElement(Element element)
     {
+        element.Id = IdGenerator.GetNewId();
         _elements.Add(element);
-        if (element.Selectable)
-        {
-            if (_maxSelectableId == -1)
-            {
-                _minSelectableId = _elements.Count-1;
-            }
-            _maxSelectableId = _elements.Count-1;
-        }
+        
+        RecalculateIndexes();
     }
 
-    public void Render()
+    public void UpdateElements()
+    {
+        foreach (var element in _elements)
+        {
+            element.ProcessPendingChanges();
+        }
+    }
+    public void RenderElements()
     {
         foreach (var element in _elements)
         {
@@ -168,6 +283,11 @@ public class TUI
         }
         
         Renderer.Draw(_canvas);
+    }
+
+    public void RemoveElement(Element element)
+    {
+        _removeList.Add(element.Id);
     }
 
     public void Stop()
