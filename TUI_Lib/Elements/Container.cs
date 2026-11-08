@@ -2,8 +2,11 @@
 
 public abstract class Container : Element
 {
-    public List<Element> Elements { get; private set; } = new();
+    private List<Element> _elements = new();
+    public List<Element> Elements => _elements;
 
+    private List<int> _removeList = new();
+    
     protected int MaxSelectableId = -1;
     protected int MinSelectableId = -1;
     
@@ -17,11 +20,103 @@ public abstract class Container : Element
         set
         {
             _selected = value;
-            if (Elements.Count > 0)
+            if (_elements.Count > 0 && SelectedIndex >= 0 && SelectedIndex < _elements.Count)
             {
-                Elements[SelectedIndex].Selected = value;
+                _elements[SelectedIndex].Selected = value;
             }
         }
+    }
+    
+    public override void ProcessPendingChanges()
+    {
+        foreach (var element in _elements)
+        {
+            element.ProcessPendingChanges();
+        }
+        
+        bool needToRecalculate = false;
+        
+        if (_removeList.Count > 0)
+        {
+            foreach (var element in _removeList)
+            {
+                Element? elementToRemove = _elements.Find(e => e.Id == element);
+
+                if (elementToRemove == null)
+                {
+                    continue;
+                }
+                
+                int indexToRemove = _elements.IndexOf(elementToRemove);
+                    
+                _elements.Remove(elementToRemove);
+                
+                if (_elements.Count == 0) {
+                    SelectedIndex = -1;
+                    _removeList.Clear();
+                    return;
+                }
+
+                if (SelectedIndex > indexToRemove)
+                {
+                    SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
+                }
+                
+                if (elementToRemove.Selected)
+                {
+                    needToRecalculate = true;
+                }
+            }
+        }
+
+        if (needToRecalculate)
+        {
+            RecalculateIndexes();
+                    
+            int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+            if (nearestSelectableElement != -1)
+            {
+                SelectElement(nearestSelectableElement);
+            }
+            else
+            {
+                SelectedIndex = -1;
+            }
+        }
+        
+        _removeList.Clear();
+    }
+
+    private int SearchNearestSelectableElement(int pos)
+    {
+        if (_elements.Count == 0) return -1;
+        
+        pos = Math.Clamp(pos, 0, _elements.Count - 1); 
+        
+        int nearestSelectableElement = -1;
+        
+        for (int i = 0; i < _elements.Count; i++)
+        {
+            if (pos - i >= 0)
+            {
+                if (_elements[pos - i].Selectable)
+                {
+                    nearestSelectableElement = pos - i;
+                    break;
+                }
+            }
+            if (pos + i < _elements.Count)
+            {
+                if (_elements[pos + i].Selectable)
+                {
+                    nearestSelectableElement = pos + i;
+                    break;
+                }
+            }
+        }
+
+        return nearestSelectableElement;
     }
 
     public override void Invalidate()
@@ -36,7 +131,8 @@ public abstract class Container : Element
 
     public override bool HandleKey(ConsoleKeyInfo key)
     {
-        if(Elements[SelectedIndex].HandleKey(key)) return true;
+        if (_elements.Count == 0 || SelectedIndex < 0 || SelectedIndex >= _elements.Count) return false;
+        if(_elements[SelectedIndex].HandleKey(key)) return true;
         
         switch (key.Key)
         {
@@ -62,27 +158,59 @@ public abstract class Container : Element
 
     public void AddElement(Element element)
     {
+        element.Id = IdGenerator.GetNewId();
+        
         element.Parent = this;
-        Elements.Add(element);
+        
+        _elements.Add(element);
         if (element.Selectable)
         {
-            if (MaxSelectableId == -1)
-            {
-                MinSelectableId = Elements.Count-1;
-                SelectElement(MinSelectableId);
-            }
-            MaxSelectableId = Elements.Count-1;
+            RecalculateIndexes();
+            SelectElement(MinSelectableId);
         }
         Invalidate();
+    }
+
+    public void RemoveElement(Element element)
+    {
+        if (_elements.Contains(element))
+        {
+            _removeList.Add(element.Id);
+        }
     }
     
     private void SelectElement(int index)
     {
-        if (index >= 0 && Elements.Count > 0)
-        {
-            Elements[SelectedIndex].Selected = false;
-            Elements[index].Selected = true;
+        if (index >= 0 && _elements.Count > 0 && index < _elements.Count)
+        { 
+            if (SelectedIndex >= 0 && SelectedIndex < _elements.Count)
+            {
+                _elements[SelectedIndex].Selected = false;
+            }
+            _elements[index].Selected = true;
             SelectedIndex = index;
+        }
+    }
+    
+    private void RecalculateIndexes()
+    {
+        
+        MaxSelectableId = -1;
+        MinSelectableId = -1;
+        
+        for (int i = 0; i < _elements.Count; i++)
+        {
+            if (MinSelectableId == -1)
+            {
+                if (_elements[i].Selectable)
+                {
+                    MinSelectableId = i;
+                }
+            }
+            if (_elements[i].Selectable)
+            {
+                MaxSelectableId = i;
+            }
         }
     }
 
@@ -91,20 +219,20 @@ public abstract class Container : Element
         var index = -1;
         if (delta > 0)
         {
-            for (int i = SelectedIndex+delta; i < Elements.Count; i++)
+            for (int i = SelectedIndex+delta; i < _elements.Count; i++)
             {
-                if (Elements[i].Selectable)
+                if (_elements[i].Selectable)
                 {
                     index = i;
                     break;
                 }
             }
         }
-        else if (delta < 0)
+        else  if (delta < 0)
         {
             for (int i = SelectedIndex+delta; i >= 0; i--)
             {
-                if (Elements[i].Selectable)
+                if (_elements[i].Selectable)
                 {
                     index = i;
                     break;
