@@ -47,7 +47,7 @@ public class PongExample
             Pong(dt);
         };
 
-        _ui.OnKeyAvalible += (key) =>
+        _ui.OnKeyAvailable += (key) =>
         {
             switch (key.Key)
             {
