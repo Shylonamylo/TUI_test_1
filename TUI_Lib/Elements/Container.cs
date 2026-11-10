@@ -3,7 +3,7 @@
 public abstract class Container : Element
 {
     private List<Element> _elements = new();
-    public List<Element> Elements => _elements;
+    public List<Element> Elements => _elements.ToList();
 
     private List<int> _removeList = new();
     
