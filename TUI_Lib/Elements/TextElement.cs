@@ -3,6 +3,7 @@
 public class TextElement : Element
 {
     private string _text = "";
+    private int _maxLength = 20;
 
     public virtual string Text
     {
@@ -14,8 +15,12 @@ public class TextElement : Element
         }
     }
 
-    public int MaxLength { get; set; } = 20;
-    
+    public int MaxLength
+    {
+        get => _maxLength;
+        set => _maxLength = Math.Clamp(value, 1, int.MaxValue);
+    }
+
     public int GetLinesCount()
     {
         var result = (Text.Length + MaxLength-1) / MaxLength;
