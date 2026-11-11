@@ -166,7 +166,10 @@ public abstract class Container : Element
         if (element.Selectable)
         {
             RecalculateIndexes();
-            SelectElement(MinSelectableId);
+            if (MinSelectableId==_elements.Count - 1)
+            {
+                SelectElement(MinSelectableId);
+            }
         }
         Invalidate();
     }
