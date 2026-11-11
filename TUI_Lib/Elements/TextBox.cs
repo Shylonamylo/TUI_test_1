@@ -91,8 +91,6 @@ public class TextBox : TextBlock
     {
         if (Text.Length > 0 && position > 0 && position < Text.Length+1)
         {
-            List<char> _text = Text.ToList();
-            
             if (_cursorPos >= Text.Length)
             {
                 _cursorPos = Text.Length;
@@ -102,9 +100,7 @@ public class TextBox : TextBlock
                 _cursorPos--;
             }
             
-            _text.RemoveAt(position-1);
-            
-            Text = new string(_text.ToArray());
+            Text = Text.Remove(position-1, 1);
             
             OnTextChanged?.Invoke(Text);
         }
