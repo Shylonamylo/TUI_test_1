@@ -14,6 +14,7 @@ public class TUI
     public event Action<ConsoleKeyInfo>? OnKeyAvailable;
 
     private List<int> _removeList = new();
+    private List<Element> _addList = new();
     
     public int SelectedIndex { get; private set; } = 0;
     
@@ -41,85 +42,23 @@ public class TUI
         SelectElement(_minSelectableId);
         Stopwatch stopwatch = Stopwatch.StartNew();
         
+        ProcessRemoveList();
+        ProcessAddList();
+        RecalculateIndexes();
+        SelectElement(_minSelectableId);
+        
         stopwatch.Start();
         
         while (!cts.IsCancellationRequested)
         {
             var startTime = stopwatch.Elapsed.TotalSeconds;
 
-            if (SizeChanged())
-            {
-                _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
-                
-                try
-                {
-                    Console.Clear();
-                    Console.CursorVisible = false;
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
+            CheckSizeChanged();
 
-            if (_removeList.Count > 0)
-            {
-                bool needToRecalculate = false;
-                foreach (var element in _removeList)
-                {
-                    Element? elementToRemove = _elements.Find(e => e.Id == element);
+            ProcessRemoveList();
+            ProcessAddList();
 
-                    if (elementToRemove == null)
-                    {
-                        continue;
-                    }
-                
-                    int indexToRemove = _elements.IndexOf(elementToRemove);
-                    
-                    _elements.Remove(elementToRemove);
-                
-                    if (_elements.Count == 0) {
-                        SelectedIndex = -1;
-                        break;
-                    }
-
-                    if (SelectedIndex > indexToRemove)
-                    {
-                        SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
-                    }
-                
-                    if (elementToRemove.Selected)
-                    {
-                        needToRecalculate = true;
-                    }
-                }
-                if (needToRecalculate)
-                {
-                    RecalculateIndexes();
-                    
-                    int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
-
-                    if (nearestSelectableElement != -1)
-                    {
-                        SelectElement(nearestSelectableElement);
-                    }
-                    else
-                    {
-                        SelectedIndex = -1;
-                    }
-                }
-            }
-            
-            _removeList.Clear();
-            
-            while(Console.KeyAvailable)
-            {
-                var key = Console.ReadKey(true);
-                
-                OnKeyAvailable?.Invoke(key);
-                
-                HandleKey(key);
-            }
+            ProcessConsoleKeyBuffer();
 
             UpdateElements();
             RenderElements();
@@ -132,14 +71,137 @@ public class TUI
                 Thread.Sleep((int)(sleepTime*1000));
             }
             
-            var deltaTime = stopwatch.Elapsed.TotalSeconds - startTime;
+            frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
             
-            OnTick?.Invoke(deltaTime);
+            OnTick?.Invoke(frameTime);
+            
+            frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
 
-            FPS = (int)(1.0 / deltaTime);
-
+            FPS = (int)(1.0 / frameTime);
         }
     }
+
+    private void ProcessConsoleKeyBuffer()
+    {
+        while(Console.KeyAvailable)
+        {
+            var key = Console.ReadKey(true);
+                
+            OnKeyAvailable?.Invoke(key);
+                
+            HandleKey(key);
+        }
+    }
+
+    private void ProcessRemoveList()
+    {
+        if (_removeList.Count > 0)
+        {
+            bool needToRecalculate = false;
+            foreach (var element in _removeList)
+            {
+                Element? elementToRemove = _elements.Find(e => e.Id == element);
+
+                if (elementToRemove == null)
+                {
+                    continue;
+                }
+                
+                int indexToRemove = _elements.IndexOf(elementToRemove);
+                    
+                _elements.Remove(elementToRemove);
+                
+                if (_elements.Count == 0) {
+                    SelectedIndex = -1;
+                    break;
+                }
+
+                if (SelectedIndex > indexToRemove)
+                {
+                    SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
+                }
+                
+                if (elementToRemove.Selected)
+                {
+                    needToRecalculate = true;
+                }
+            }
+            if (needToRecalculate)
+            {
+                RecalculateIndexes();
+                    
+                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                if (nearestSelectableElement != -1)
+                {
+                    SelectElement(nearestSelectableElement);
+                }
+                else
+                {
+                    SelectedIndex = -1;
+                }
+            }
+        }
+
+        _removeList.Clear();
+    }
+
+    private void ProcessAddList()
+    {
+        if (_addList.Count > 0)
+        {
+            bool needToRecalculate = false;
+            
+            foreach (var element in _addList)
+            {
+                if(_elements.Contains(element) || _elements.Any(e => e.Id == element.Id)) continue;
+                
+                _elements.Add(element);
+                
+                if (element.Selectable || SelectedIndex==-1)
+                {
+                    needToRecalculate = true;
+                }
+            }
+            
+            if (needToRecalculate)
+            {
+                RecalculateIndexes();
+                    
+                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                if (nearestSelectableElement != -1)
+                {
+                    SelectElement(nearestSelectableElement);
+                }
+                else
+                {
+                    SelectedIndex = -1;
+                }
+            }
+        }
+
+        _addList.Clear();
+    }
+    
+    private void CheckSizeChanged()
+    {
+        if (SizeChanged())
+        {
+            _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
+                
+            try
+            {
+                Console.Clear();
+                Console.CursorVisible = false;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+    }
+
     private int SearchNearestSelectableElement(int pos)
     {
         if (_elements.Count == 0) return -1;
@@ -263,9 +325,7 @@ public class TUI
     public void AddElement(Element element)
     {
         element.Id = IdGenerator.GetNewId();
-        _elements.Add(element);
-        
-        RecalculateIndexes();
+        _addList.Add(element);
     }
 
     public void UpdateElements()
@@ -275,6 +335,7 @@ public class TUI
             element.ProcessPendingChanges();
         }
     }
+    
     public void RenderElements()
     {
         foreach (var element in _elements)
