@@ -6,6 +6,7 @@ public abstract class Container : Element
     public List<Element> Elements => _elements.ToList();
 
     private List<int> _removeList = new();
+    private List<Element> _addList = new();
     
     protected int MaxSelectableId = -1;
     protected int MinSelectableId = -1;
@@ -33,7 +34,13 @@ public abstract class Container : Element
         {
             element.ProcessPendingChanges();
         }
-        
+
+        ProcessRemoveList();
+        ProcessAddList();
+    }
+
+    private void ProcessRemoveList()
+    {
         bool needToRecalculate = false;
         
         if (_removeList.Count > 0)
@@ -85,7 +92,47 @@ public abstract class Container : Element
             }
         }
         
+        Invalidate();
         _removeList.Clear();
+    }
+    
+    private void ProcessAddList()
+    {
+        if (_addList.Count > 0)
+        {
+            bool needToRecalculate = false;
+            
+            foreach (var element in _addList)
+            {
+                if(_elements.Contains(element) || _elements.Any(e => e.Id == element.Id)) continue;
+                
+                _elements.Add(element);
+                
+                if (element.Selectable || SelectedIndex==-1)
+                {
+                    needToRecalculate = true;
+                }
+            }
+            
+            if (needToRecalculate)
+            {
+                RecalculateIndexes();
+                    
+                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                if (nearestSelectableElement != -1)
+                {
+                    SelectElement(nearestSelectableElement);
+                }
+                else
+                {
+                    SelectedIndex = -1;
+                }
+            }
+        }
+        
+        Invalidate();
+        _addList.Clear();
     }
 
     private int SearchNearestSelectableElement(int pos)
@@ -162,16 +209,7 @@ public abstract class Container : Element
         
         element.Parent = this;
         
-        _elements.Add(element);
-        if (element.Selectable)
-        {
-            RecalculateIndexes();
-            if (MinSelectableId==_elements.Count - 1)
-            {
-                SelectElement(MinSelectableId);
-            }
-        }
-        Invalidate();
+        _addList.Add(element);
     }
 
     public void RemoveElement(Element element)
