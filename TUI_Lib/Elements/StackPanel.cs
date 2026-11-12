@@ -88,13 +88,13 @@ public class StackPanel : Container
         if (Horizontal)
         {
             _cachedSize = Elements.Count > 0
-                ? new Vec2I(Elements.Sum(e => e.Size.X), Elements.Max(e => e.Size.Y))
+                ? new Vec2I(Elements.Sum(e => e.Size.X) + Elements.Count, Elements.Max(e => e.Size.Y))
                 : new Vec2I(1, 1);
         }
         else
         {
             _cachedSize = Elements.Count > 0
-                ? new Vec2I(Elements.Max(e => e.Size.X), Elements.Sum(e => e.Size.Y))
+                ? new Vec2I(Elements.Max(e => e.Size.X), Elements.Sum(e => e.Size.Y) + Elements.Count)
                 : new Vec2I(1, 1);
         }
     }
