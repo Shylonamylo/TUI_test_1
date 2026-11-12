@@ -28,26 +28,41 @@ public class TextBox : TextBlock
     
     public override bool HandleKey(ConsoleKeyInfo key)
     {
+        int prevCursorPos = _cursorPos;
         bool handled = false;
         switch (key.Key)
         {
             case ConsoleKey.UpArrow:
             case ConsoleKey.DownArrow:
-                break;            
+                break;        
+            
             case ConsoleKey.LeftArrow:
+                
                 _cursorPos = _cursorPos>0?_cursorPos-1:0;
-                handled = true;
+                
+                if (prevCursorPos != _cursorPos)
+                {
+                    handled = true;
+                }
+                
                 break;
             
             case ConsoleKey.RightArrow:
+                
                 _cursorPos = _cursorPos<Text.Length?_cursorPos+1:Text.Length;
-                handled = true;
+
+                if (prevCursorPos != _cursorPos)
+                {
+                    handled = true;
+                }
+                
                 break;
             
             case ConsoleKey.Backspace:
                 RemoveChar(_cursorPos);
                 handled = true;
                 break;
+            
             case ConsoleKey.Enter:
                 handled = true;
                 break;
@@ -80,7 +95,6 @@ public class TextBox : TextBlock
         {
             Text = Text.Insert(_cursorPos, character.ToString());
             _cursorPos++;
-            OnTextChanged?.Invoke(Text);
         }
         else
         {
