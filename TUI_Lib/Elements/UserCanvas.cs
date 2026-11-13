@@ -30,7 +30,7 @@ public class UserCanvas : Element, IDrawableCanvas
     public UserCanvas(int width, int height)
     {
         _canvas = new Canvas(width, height);
-        Fill('\0', Style.DefaultInverted);
+        Fill(' ', Style.Default);
     }
     
     public bool SetCell(int x, int y, char c, Style style)
