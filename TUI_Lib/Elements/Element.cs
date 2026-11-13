@@ -9,7 +9,7 @@ public abstract class Element
     public int Id { get; set; }
     public Vec2I Position { get; set; }
     public virtual Vec2I Size { get; set; }
-    public virtual bool Selectable { get; set; } = true;
+    public virtual bool Selectable { get; set; } = false;
     public virtual bool Selected { get; set; }
     public Style Style { get; set; } = Style.Default;
     public bool IsDirty { get; set; } = true;
