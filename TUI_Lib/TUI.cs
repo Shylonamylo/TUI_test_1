@@ -47,8 +47,6 @@ public class TUI
         RecalculateIndexes();
         SelectElement(_minSelectableId);
         
-        stopwatch.Start();
-        
         while (!cts.IsCancellationRequested)
         {
             var startTime = stopwatch.Elapsed.TotalSeconds;
