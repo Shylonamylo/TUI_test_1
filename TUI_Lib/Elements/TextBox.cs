@@ -115,8 +115,6 @@ public class TextBox : TextBlock
             }
             
             Text = Text.Remove(position-1, 1);
-            
-            OnTextChanged?.Invoke(Text);
         }
     }
 
