@@ -17,9 +17,13 @@ public class TUI
     private List<Element> _addList = new();
     
     public int SelectedIndex { get; private set; } = 0;
-    
-    public int RequiredFPS { get; set; } = 60;
-    
+
+    public int RequiredFPS
+    {
+        get => _requiredFps;
+        set => _requiredFps = Math.Clamp(value, 1, int.MaxValue);
+    }
+
     public int FPS { get; private set; } = 0;
 
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
@@ -28,7 +32,8 @@ public class TUI
 
     private int _maxSelectableId = -1;
     private int _minSelectableId = -1;
-    
+    private int _requiredFps = 60;
+
     public TUI()
     {
     }
@@ -75,7 +80,7 @@ public class TUI
             
             frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
 
-            FPS = (int)(1.0 / frameTime);
+            FPS = frameTime>0?(int)(1.0 / frameTime):RequiredFPS;
         }
     }
 
