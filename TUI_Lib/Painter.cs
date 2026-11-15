@@ -44,9 +44,16 @@ public static class Painter
                 elementType = elementType.BaseType;
                 continue;
             }
-        
-            IElementRenderer renderer = (IElementRenderer)Activator.CreateInstance(rendererType)!;
+
+            var rendererInstance = Activator.CreateInstance(rendererType);
+            
+            if(rendererInstance == null)
+                throw new NullReferenceException($"Неправильный рендерер {rendererTypeName}.");
+            
+            IElementRenderer renderer = (IElementRenderer)rendererInstance;
+            
             _renderers.Add(type, renderer);
+            
             return renderer;
         }
         

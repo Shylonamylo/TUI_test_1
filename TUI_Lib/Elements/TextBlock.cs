@@ -15,11 +15,9 @@ public class TextBlock : TextElement
                 return new Vec2I(MaxLength, GetLinesCount());
             
             else if (Border.FullSize)
-                
                 return new Vec2I(MaxLength + 2, GetLinesCount()+2);
             
             else 
-            
                 return new Vec2I(MaxLength + 2, GetLinesCount());
         }
     }

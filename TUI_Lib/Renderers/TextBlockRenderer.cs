@@ -12,7 +12,8 @@ public class TextBlockRenderer : IElementRenderer
         
         canvas.DrawBorder(textBlock.Position.X, textBlock.Position.Y, textBlock.Size.X, textBlock.Size.Y, textBlock.Border, textBlock.Style);
         
-        int textOffset = textBlock.Size.Y - textBlock.GetLinesCount() < 0 ? 0 : textBlock.Size.Y - textBlock.GetLinesCount();
+        int textOffset = (textBlock.Size.Y - textBlock.GetLinesCount() < 0 ? 1 : textBlock.Size.Y - textBlock.GetLinesCount())
+                         +(textBlock.Border is { FullSize: true }?0:1);
         
         canvas.WriteStringWrapped(textBlock.Position.X+1, textBlock.Position.Y+textOffset-1, textBlock.Text, textBlock.MaxLength, textBlock.Style);
     }

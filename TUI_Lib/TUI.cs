@@ -14,11 +14,16 @@ public class TUI
     public event Action<ConsoleKeyInfo>? OnKeyAvailable;
 
     private List<int> _removeList = new();
+    private List<Element> _addList = new();
     
     public int SelectedIndex { get; private set; } = 0;
-    
-    public int RequiredFPS { get; set; } = 60;
-    
+
+    public int RequiredFPS
+    {
+        get => _requiredFps;
+        set => _requiredFps = Math.Clamp(value, 1, int.MaxValue);
+    }
+
     public int FPS { get; private set; } = 0;
 
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
@@ -27,7 +32,10 @@ public class TUI
 
     private int _maxSelectableId = -1;
     private int _minSelectableId = -1;
-    
+    private int _requiredFps = 60;
+
+    private bool _stopped = false;
+
     public TUI()
     {
     }
@@ -41,105 +49,173 @@ public class TUI
         SelectElement(_minSelectableId);
         Stopwatch stopwatch = Stopwatch.StartNew();
         
-        stopwatch.Start();
+        ProcessRemoveList();
+        ProcessAddList();
+        RecalculateIndexes();
+        SelectElement(_minSelectableId);
         
         while (!cts.IsCancellationRequested)
         {
-            var startTime = stopwatch.Elapsed.TotalSeconds;
-
-            if (SizeChanged())
+            try
             {
-                _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
-                
-                try
-                {
-                    Console.Clear();
-                    Console.CursorVisible = false;
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
+                var startTime = stopwatch.Elapsed.TotalSeconds;
 
-            if (_removeList.Count > 0)
+                CheckSizeChanged();
+
+                ProcessRemoveList();
+                ProcessAddList();
+
+                ProcessConsoleKeyBuffer();
+
+                UpdateElements();
+                RenderElements();
+
+                var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+                var sleepTime = (1.0 / RequiredFPS) - frameTime;
+
+                if (sleepTime > 0)
+                {
+                    Thread.Sleep((int)(sleepTime * 1000));
+                }
+
+                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                OnTick?.Invoke(frameTime);
+
+                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
+            }
+            catch (Exception e)
             {
-                bool needToRecalculate = false;
-                foreach (var element in _removeList)
-                {
-                    Element? elementToRemove = _elements.Find(e => e.Id == element);
-
-                    if (elementToRemove == null)
-                    {
-                        continue;
-                    }
-                
-                    int indexToRemove = _elements.IndexOf(elementToRemove);
-                    
-                    _elements.Remove(elementToRemove);
-                
-                    if (_elements.Count == 0) {
-                        SelectedIndex = -1;
-                        break;
-                    }
-
-                    if (SelectedIndex > indexToRemove)
-                    {
-                        SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
-                    }
-                
-                    if (elementToRemove.Selected)
-                    {
-                        needToRecalculate = true;
-                    }
-                }
-                if (needToRecalculate)
-                {
-                    RecalculateIndexes();
-                    
-                    int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
-
-                    if (nearestSelectableElement != -1)
-                    {
-                        SelectElement(nearestSelectableElement);
-                    }
-                    else
-                    {
-                        SelectedIndex = -1;
-                    }
-                }
+                Console.Clear();
+                Console.WriteLine(e);
+                Console.ReadLine();
+                Stop();
             }
-            
-            _removeList.Clear();
-            
-            while(Console.KeyAvailable)
-            {
-                var key = Console.ReadKey(true);
-                
-                OnKeyAvailable?.Invoke(key);
-                
-                HandleKey(key);
-            }
-
-            UpdateElements();
-            RenderElements();
-
-            var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-            var sleepTime = (1.0 / RequiredFPS) - frameTime;
-
-            if (sleepTime > 0)
-            {
-                Thread.Sleep((int)(sleepTime*1000));
-            }
-            
-            var deltaTime = stopwatch.Elapsed.TotalSeconds - startTime;
-            
-            OnTick?.Invoke(deltaTime);
-
-            FPS = (int)(1.0 / deltaTime);
-
         }
     }
+
+    private void ProcessConsoleKeyBuffer()
+    {
+        while(Console.KeyAvailable)
+        {
+            var key = Console.ReadKey(true);
+                
+            OnKeyAvailable?.Invoke(key);
+                
+            HandleKey(key);
+        }
+    }
+
+    private void ProcessRemoveList()
+    {
+        if (_removeList.Count > 0)
+        {
+            bool needToRecalculate = false;
+            foreach (var element in _removeList)
+            {
+                Element? elementToRemove = _elements.Find(e => e.Id == element);
+
+                if (elementToRemove == null)
+                {
+                    continue;
+                }
+                
+                int indexToRemove = _elements.IndexOf(elementToRemove);
+                    
+                _elements.Remove(elementToRemove);
+                
+                if (_elements.Count == 0) {
+                    SelectedIndex = -1;
+                    break;
+                }
+
+                if (SelectedIndex > indexToRemove)
+                {
+                    SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
+                }
+                
+                if (elementToRemove.Selected)
+                {
+                    needToRecalculate = true;
+                }
+            }
+            if (needToRecalculate)
+            {
+                RecalculateIndexes();
+                    
+                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                if (nearestSelectableElement != -1)
+                {
+                    SelectElement(nearestSelectableElement);
+                }
+                else
+                {
+                    SelectedIndex = -1;
+                }
+            }
+        }
+
+        _removeList.Clear();
+    }
+
+    private void ProcessAddList()
+    {
+        if (_addList.Count > 0)
+        {
+            bool needToRecalculate = false;
+            
+            foreach (var element in _addList)
+            {
+                if(_elements.Contains(element) || _elements.Any(e => e.Id == element.Id)) continue;
+                
+                _elements.Add(element);
+                
+                if (element.Selectable || SelectedIndex==-1)
+                {
+                    needToRecalculate = true;
+                }
+            }
+            
+            if (needToRecalculate)
+            {
+                RecalculateIndexes();
+                    
+                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
+
+                if (nearestSelectableElement != -1)
+                {
+                    SelectElement(nearestSelectableElement);
+                }
+                else
+                {
+                    SelectedIndex = -1;
+                }
+            }
+        }
+
+        _addList.Clear();
+    }
+    
+    private void CheckSizeChanged()
+    {
+        if (SizeChanged())
+        {
+            _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
+            try
+            {
+                Console.Clear();
+                Console.CursorVisible = false;
+            }
+            catch (Exception e)
+            {
+                //ignored
+            }
+        }
+    }
+
     private int SearchNearestSelectableElement(int pos)
     {
         if (_elements.Count == 0) return -1;
@@ -263,9 +339,7 @@ public class TUI
     public void AddElement(Element element)
     {
         element.Id = IdGenerator.GetNewId();
-        _elements.Add(element);
-        
-        RecalculateIndexes();
+        _addList.Add(element);
     }
 
     public void UpdateElements()
@@ -275,6 +349,7 @@ public class TUI
             element.ProcessPendingChanges();
         }
     }
+    
     public void RenderElements()
     {
         foreach (var element in _elements)
@@ -292,6 +367,8 @@ public class TUI
 
     public void Stop()
     {
+        if(_stopped) return;
+        _stopped = true;
         cts.Cancel();
         cts.Dispose();
     }

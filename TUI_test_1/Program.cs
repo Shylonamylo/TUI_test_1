@@ -47,6 +47,11 @@ class Program
         Label = "Кастомный элемент"
     };
     
+    private static readonly Button _bubbleSort = new Button()
+    {
+        Label = "Визуализация пузырьковой сортировки"
+    };
+    
     static void Main(string[] args)
     {
         _basic.OnClick += () =>
@@ -78,6 +83,12 @@ class Program
             new CustomElementExample().Run();
             _ui.Stop();
         };
+
+        _bubbleSort.OnClick += () =>
+        {
+            new BubbleSortVisualizationExample().Run();
+            _ui.Stop();
+        };
         
         _stackPanel.AddElement(_hello);
         _stackPanel.AddElement(_basic);
@@ -85,6 +96,7 @@ class Program
         _stackPanel.AddElement(_pingPing);
         _stackPanel.AddElement(_performanceTest);
         _stackPanel.AddElement(_customElement);
+        _stackPanel.AddElement(_bubbleSort);
         
         _ui.AddElement(_stackPanel);
         
