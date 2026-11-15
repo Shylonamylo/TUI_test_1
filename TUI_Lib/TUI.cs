@@ -204,16 +204,8 @@ public class TUI
         if (SizeChanged())
         {
             _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
-                
-            try
-            {
-                Console.Clear();
-                Console.CursorVisible = false;
-            }
-            catch
-            {
-                // ignored
-            }
+            Console.Clear();
+            Console.CursorVisible = false;
         }
     }
 
