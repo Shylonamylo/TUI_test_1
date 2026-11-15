@@ -56,33 +56,43 @@ public class TUI
         
         while (!cts.IsCancellationRequested)
         {
-            var startTime = stopwatch.Elapsed.TotalSeconds;
-
-            CheckSizeChanged();
-
-            ProcessRemoveList();
-            ProcessAddList();
-
-            ProcessConsoleKeyBuffer();
-
-            UpdateElements();
-            RenderElements();
-
-            var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-            var sleepTime = (1.0 / RequiredFPS) - frameTime;
-
-            if (sleepTime > 0)
+            try
             {
-                Thread.Sleep((int)(sleepTime*1000));
-            }
-            
-            frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-            
-            OnTick?.Invoke(frameTime);
-            
-            frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+                var startTime = stopwatch.Elapsed.TotalSeconds;
 
-            FPS = frameTime>0?(int)(1.0 / frameTime):RequiredFPS;
+                CheckSizeChanged();
+
+                ProcessRemoveList();
+                ProcessAddList();
+
+                ProcessConsoleKeyBuffer();
+
+                UpdateElements();
+                RenderElements();
+
+                var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+                var sleepTime = (1.0 / RequiredFPS) - frameTime;
+
+                if (sleepTime > 0)
+                {
+                    Thread.Sleep((int)(sleepTime * 1000));
+                }
+
+                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                OnTick?.Invoke(frameTime);
+
+                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
+            }
+            catch (Exception e)
+            {
+                Console.Clear();
+                Console.WriteLine(e);
+                Console.ReadLine();
+                Stop();
+            }
         }
     }
 
