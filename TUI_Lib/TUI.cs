@@ -34,6 +34,8 @@ public class TUI
     private int _minSelectableId = -1;
     private int _requiredFps = 60;
 
+    private bool _stopped = false;
+
     public TUI()
     {
     }
@@ -356,6 +358,8 @@ public class TUI
 
     public void Stop()
     {
+        if(_stopped) return;
+        _stopped = true;
         cts.Cancel();
         cts.Dispose();
     }
