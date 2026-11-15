@@ -209,7 +209,7 @@ public class TUI
                 Console.Clear();
                 Console.CursorVisible = false;
             }
-            catch (Exception e)
+            catch
             {
                 //ignored
             }
