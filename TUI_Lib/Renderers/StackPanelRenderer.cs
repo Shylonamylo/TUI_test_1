@@ -22,7 +22,7 @@ public class StackPanelRenderer : IElementRenderer
                 
                 if(offsetX>canvas.Width){break;}
                 
-                offsetX += childElement.Size.X+1;
+                offsetX += childElement.Size.X + 2;
                 Painter.Paint(renderedChildElement, canvas);
             }
         }
