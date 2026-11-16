@@ -18,7 +18,7 @@
 
 | Визуализация пузырьковой сортировки | Классический Понг |
 | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/BubbleSortVisualizationExample.png" alt="Визуализация сортировки" width="400"> | <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/PingPongExample.png" alt="Игра Понг" width="400"> |
+| ![Визуализация пузырьковой сортировки](https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/BubbleSortVisualizationExample.png) | ![Классический Понг](https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/PingPongExample.png) |
 
 ## Быстрый старт
 
