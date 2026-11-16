@@ -16,18 +16,9 @@
 
 Благодаря `UserCanvas` можно создавать сложные визуализации и даже игры:
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/BubbleSortVisualizationExample.png" alt="Визуализация сортировки"><br>
-      <i>Визуализация пузырьковой сортировки</i>
-    </td>
-    <td align="center" width="50%">
-      <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/PingPongExample.png" alt="Игра Понг"><br>
-      <i>Классический Понг</i>
-    </td>
-  </tr>
-</table>
+| Визуализация пузырьковой сортировки | Классический Понг |
+| :---: | :---: |
+| <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/BubbleSortVisualizationExample.png" alt="Визуализация сортировки" width="400"> | <img src="https://raw.githubusercontent.com/Shylonamylo/TUI_test_1/HEAD/docs/images/PingPongExample.png" alt="Игра Понг" width="400"> |
 
 ## Быстрый старт
 
