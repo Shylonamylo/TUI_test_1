@@ -1,4 +1,5 @@
-﻿using TUI_Lib;
+﻿using System.Drawing;
+using TUI_Lib;
 using TUI_Lib.ConsoleGraphics.Buffering;
 using TUI_Lib.ConsoleGraphics.Colors;
 using TUI_Lib.ConsoleGraphics.Types;
@@ -52,6 +53,11 @@ class Program
         Label = "Визуализация пузырьковой сортировки"
     };
     
+    private static readonly Button _rendererStressTest = new Button()
+    {
+        Label = "Стресс тест отрисовки"
+    };
+    
     static void Main(string[] args)
     {
         _basic.OnClick += () =>
@@ -89,6 +95,12 @@ class Program
             new BubbleSortVisualizationExample().Run();
             _ui.Stop();
         };
+
+        _rendererStressTest.OnClick += () =>
+        {
+            new RendererStressTest().Run();
+            _ui.Stop();
+        };
         
         _stackPanel.AddElement(_hello);
         _stackPanel.AddElement(_basic);
@@ -97,6 +109,7 @@ class Program
         _stackPanel.AddElement(_performanceTest);
         _stackPanel.AddElement(_customElement);
         _stackPanel.AddElement(_bubbleSort);
+        _stackPanel.AddElement(_rendererStressTest);
         
         _ui.AddElement(_stackPanel);
         
