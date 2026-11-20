@@ -14,9 +14,10 @@ public class UserCanvasRenderer : IElementRenderer
 
         for (int y = 0; y < userCanvas.Height; y++) 
         {
-            for (int x = 0; x < userCanvas.Width; x++) 
+            for (int x = 0; x < userCanvas.Width; x++)
             {
-                canvas.SetCell(userCanvas.Position.X + x + 1, userCanvas.Position.Y + y + 1, userCanvas.GetCell(x, y).Char, userCanvas.GetCell(x, y).Style);
+                Cell cell = userCanvas.GetCell(x, y);
+                canvas.SetCell(userCanvas.Position.X + x + 1, userCanvas.Position.Y + y + 1, cell.Char, cell.Style);
             }
         }
     }

@@ -6,6 +6,7 @@ namespace TUI_Lib.ConsoleGraphics.Rendering;
 
 public static class Renderer
 {
+    private static OptimizedConsole optimizedConsole = new();
     public static void Draw(Canvas canvas)
     {
         int maxX = Math.Min(canvas.Width, Console.BufferWidth - 1);
@@ -62,40 +63,7 @@ public static class Renderer
                 stringBuilder.Clear();
             }
         }
-        
-        /*for (int x = 0; x < maxX; x++)
-        {
-            for (int y = 0; y < maxY; y++)
-            {
-                if(!canvas.HasChanged(x, y)) continue;
-                
-                try
-                {
-                    Console.SetCursorPosition(x, y);
-                }
-                catch
-                {
-                    continue;
-                }
-                
-                Cell cell = canvas.GetCell(x, y);
-
-                if (cell.Char != '\0')
-                {
-                    Console.BackgroundColor = cell.Style.BackgroundColor;
-                    Console.ForegroundColor = cell.Style.ForegroundColor;
-                    Console.Write(cell.Char);
-                }
-                else
-                {
-                    Console.BackgroundColor = cell.Style.ForegroundColor;
-                    Console.ForegroundColor = cell.Style.BackgroundColor;
-                    Console.Write(cell.Char);
-                }
-            }
-        }*/
-        
-        
+        optimizedConsole.Flush();
         canvas.Commit();
     }
 
@@ -105,18 +73,17 @@ public static class Renderer
 
         try 
         {
-            if (Console.ForegroundColor != style.ForegroundColor)
-                Console.ForegroundColor = style.ForegroundColor;
-
-            if (Console.BackgroundColor != style.BackgroundColor)
-                Console.BackgroundColor = style.BackgroundColor;
+            optimizedConsole.ForegroundColor = style.ForegroundColor;
+            optimizedConsole.BackgroundColor = style.BackgroundColor;
         
-            Console.SetCursorPosition(x, y);
-            Console.Write(text.ToString());
+            optimizedConsole.SetCursorPosition(x, y);
+            optimizedConsole.Write(text.ToString());
         }
         catch
         {
             // ignored
         }
     }
+
+    public static void Reset() => optimizedConsole.Reset();
 }
