@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using TUI_Lib.ConsoleGraphics;
+using System.Runtime.InteropServices;
 using TUI_Lib.ConsoleGraphics.Buffering;
 using TUI_Lib.ConsoleGraphics.Rendering;
 using TUI_Lib.Elements;
@@ -15,7 +15,7 @@ public class TUI
 
     private List<int> _removeList = new();
     private List<Element> _addList = new();
-    
+
     public int SelectedIndex { get; private set; } = 0;
 
     public int RequiredFPS
@@ -27,7 +27,7 @@ public class TUI
     public int FPS { get; private set; } = 0;
 
     private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
-    
+
     private readonly List<Element> _elements = new();
 
     private int _maxSelectableId = -1;
@@ -35,65 +35,118 @@ public class TUI
     private int _requiredFps = 60;
 
     private bool _stopped = false;
+    private double _renderMs;
 
     public TUI()
     {
     }
-    
+
     public void Run()
     {
-        Console.SetCursorPosition(0, 0);
-        Console.Clear();
+        if (Console.IsOutputRedirected)
+            throw new InvalidOperationException("TUI нужен интерактивный терминал");
+
+        if (OperatingSystem.IsWindows())
+        {
+            const int STD_OUTPUT_HANDLE = -11;
+            const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            static extern IntPtr GetStdHandle(int nStdHandle);
+
+            [DllImport("kernel32.dll")]
+            static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+            [DllImport("kernel32.dll")]
+            static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+            void SetupConsole()
+            {
+                IntPtr handle = GetStdHandle(STD_OUTPUT_HANDLE);
+                uint mode;
+                GetConsoleMode(handle, out mode);
+                mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+                SetConsoleMode(handle, mode);
+            }
+
+            SetupConsole();
+        }
+
+        Console.CancelKeyPress += OnCancel;
+        
+        Console.Write("\x1b[?1049h\x1b[?25l");
+        Console.Write("\x1b[2J\x1b[H");
+        Renderer.Reset();
         Console.CursorVisible = false;
 
         SelectElement(_minSelectableId);
         Stopwatch stopwatch = Stopwatch.StartNew();
-        
+
         ProcessRemoveList();
         ProcessAddList();
         RecalculateIndexes();
         SelectElement(_minSelectableId);
-        
-        while (!cts.IsCancellationRequested)
+
+        try
         {
-            try
+            while (!cts.IsCancellationRequested)
             {
-                var startTime = stopwatch.Elapsed.TotalSeconds;
-
-                CheckSizeChanged();
-
-                ProcessRemoveList();
-                ProcessAddList();
-
-                ProcessConsoleKeyBuffer();
-
-                UpdateElements();
-                RenderElements();
-
-                var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-                var sleepTime = (1.0 / RequiredFPS) - frameTime;
-
-                if (sleepTime > 0)
+                try
                 {
-                    Thread.Sleep((int)(sleepTime * 1000));
+                    var startTime = stopwatch.Elapsed.TotalSeconds;
+
+                    CheckSizeChanged();
+
+                    ProcessRemoveList();
+                    ProcessAddList();
+
+                    ProcessConsoleKeyBuffer();
+
+                    UpdateElements();
+                    
+                    var sw = Stopwatch.StartNew();
+                    RenderElements();
+                    _renderMs = sw.Elapsed.TotalMilliseconds;
+
+                    var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+                    var sleepTime = (1.0 / RequiredFPS) - frameTime;
+
+                    if (sleepTime > 0)
+                    {
+                        Thread.Sleep((int)(sleepTime * 1000));
+                    }
+
+                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                    OnTick?.Invoke(frameTime);
+
+                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                    FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
                 }
-
-                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-
-                OnTick?.Invoke(frameTime);
-
-                frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-
-                FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
-            }
-            catch (Exception e)
-            {
-                Console.Clear();
-                Console.WriteLine(e);
-                Console.ReadLine();
-                Stop();
+                catch (Exception e)
+                {
+                    Console.Clear();
+                    Renderer.Reset();
+                    Console.WriteLine(e);
+                    Console.ReadLine();
+                    Stop();
+                }
             }
         }
+        finally
+        {
+            Console.CancelKeyPress -= OnCancel;
+            Renderer.Reset();
+            Console.Write("\x1b[0m\x1b[?25h\x1b[?1049l");
+            Console.CursorVisible = true;
+        }
+    }
+
+    private void OnCancel(object? sender, ConsoleCancelEventArgs e)
+    {
+        e.Cancel = true;
+        Stop();
     }
 
     private void ProcessConsoleKeyBuffer()
@@ -207,6 +260,7 @@ public class TUI
             try
             {
                 Console.Clear();
+                Renderer.Reset();
                 Console.CursorVisible = false;
             }
             catch
@@ -370,6 +424,5 @@ public class TUI
         if(_stopped) return;
         _stopped = true;
         cts.Cancel();
-        cts.Dispose();
     }
 }
