@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System.Drawing;
+using System.Reflection.Emit;
 using TUI_Lib;
 using TUI_Lib.ConsoleGraphics.Buffering;
 using TUI_Lib.ConsoleGraphics.Colors;
@@ -130,10 +131,10 @@ public class BubbleSortVisualizationExample
     {
         for (int i = 0; i < _array.Length; i++)
         {
-            Style style = _array[i].Item2 ? new Style(ConsoleColor.DarkGreen, ConsoleColor.Black) : Style.Default;
+            Style style = _array[i].Item2 ? new Style(Color.DarkGreen, Color.Black) : Style.Default;
             _canvas.DrawLine(new Vec2I(i,_canvas.Height), new Vec2I(i,_array[i].Item1), '█', style);
-            _canvas.DrawLine(new Vec2I(i,_array[i].Item1), new Vec2I(i,0), '█', new Style(ConsoleColor.Black, ConsoleColor.Black));
+            _canvas.DrawLine(new Vec2I(i,_array[i].Item1), new Vec2I(i,0), '█', new Style(Color.Black, Color.Black));
         }
-        _canvas.DrawLine(new Vec2I(_i,_canvas.Height), new Vec2I(_i,_array[_i].Item1+1), '█', new Style(ConsoleColor.DarkRed, ConsoleColor.Black));
+        _canvas.DrawLine(new Vec2I(_i,_canvas.Height), new Vec2I(_i,_array[_i].Item1+1), '█', new Style(Color.DarkRed, Color.Black));
     }
 }
