@@ -79,9 +79,7 @@ public class OptimizedConsole
         
         if (_stringBuilder.Length == 0) return;
         
-        var str = _stringBuilder.ToString();
-        
-        Console.Write($"\x1b[?2026h{str}\x1b[?2026l");
+        Console.Write($"\x1b[?2026h{_stringBuilder}\x1b[?2026l");
         
         _stringBuilder.Clear();
     }
