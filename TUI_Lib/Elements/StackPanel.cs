@@ -24,14 +24,8 @@ public class StackPanel : Container
 
     public override bool HandleKey(ConsoleKeyInfo key)
     {
-        if (Elements.Count == 0)
-        {
-            return false;
-        }
-        if (Elements[SelectedIndex].HandleKey(key))
-        {
-            return true;
-        }
+        if (Elements.Count == 0 || SelectedIndex < 0 || SelectedIndex >= Elements.Count) return false;
+        if (Elements[SelectedIndex].HandleKey(key)) return true;
 
         if (Horizontal)
         {

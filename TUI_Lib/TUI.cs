@@ -26,7 +26,9 @@ public class TUI
 
     public int FPS { get; private set; } = 0;
 
-    private readonly Canvas _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
+    private Renderer? _renderer;
+
+    private Canvas? _canvas;
 
     private readonly List<Element> _elements = new();
 
@@ -35,13 +37,79 @@ public class TUI
     private int _requiredFps = 60;
 
     private bool _stopped = false;
-    private double _renderMs;
-
-    public TUI()
-    {
-    }
 
     public void Run()
+    {
+        ConsoleInit();
+
+        _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
+        
+        _renderer = new Renderer();
+        
+        _renderer?.Reset();
+
+        SelectElement(_minSelectableId);
+
+        ProcessRemoveList();
+        ProcessAddList();
+        RecalculateIndexes();
+        SelectElement(_minSelectableId);
+        
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        try
+        {
+            while (!cts.IsCancellationRequested)
+            {
+                try
+                {
+                    var startTime = stopwatch.Elapsed.TotalSeconds;
+
+                    CheckSizeChanged();
+
+                    ProcessRemoveList();
+                    ProcessAddList();
+
+                    ProcessConsoleKeyBuffer();
+
+                    UpdateElements();
+
+                    RenderElements();
+
+                    var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+                    var sleepTime = (1.0 / RequiredFPS) - frameTime;
+
+                    if (sleepTime > 0)
+                    {
+                        Thread.Sleep((int)(sleepTime * 1000));
+                    }
+
+                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                    OnTick?.Invoke(frameTime);
+
+                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
+
+                    FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
+                }
+                catch (Exception e)
+                {
+                    Console.Write("\x1b[0m\x1b[?2J\x1b[?25h");
+                    _renderer?.Reset();
+                    Console.WriteLine(e);
+                    Stop();
+                }
+            }
+        }
+        finally
+        {
+            Console.CancelKeyPress -= OnCancel;
+            _renderer?.Reset();
+            Console.Write("\x1b[0m\x1b[?25h\x1b[?1049l");
+        }
+    }
+
+    private void ConsoleInit()
     {
         if (Console.IsOutputRedirected)
             throw new InvalidOperationException("TUI нужен интерактивный терминал");
@@ -71,76 +139,10 @@ public class TUI
 
             SetupConsole();
         }
-
+        
         Console.CancelKeyPress += OnCancel;
         
-        Console.Write("\x1b[?1049h\x1b[?25l");
-        Console.Write("\x1b[2J\x1b[H");
-        Renderer.Reset();
-        Console.CursorVisible = false;
-
-        SelectElement(_minSelectableId);
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        ProcessRemoveList();
-        ProcessAddList();
-        RecalculateIndexes();
-        SelectElement(_minSelectableId);
-
-        try
-        {
-            while (!cts.IsCancellationRequested)
-            {
-                try
-                {
-                    var startTime = stopwatch.Elapsed.TotalSeconds;
-
-                    CheckSizeChanged();
-
-                    ProcessRemoveList();
-                    ProcessAddList();
-
-                    ProcessConsoleKeyBuffer();
-
-                    UpdateElements();
-                    
-                    var sw = Stopwatch.StartNew();
-                    RenderElements();
-                    _renderMs = sw.Elapsed.TotalMilliseconds;
-
-                    var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-                    var sleepTime = (1.0 / RequiredFPS) - frameTime;
-
-                    if (sleepTime > 0)
-                    {
-                        Thread.Sleep((int)(sleepTime * 1000));
-                    }
-
-                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-
-                    OnTick?.Invoke(frameTime);
-
-                    frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
-
-                    FPS = frameTime > 0 ? (int)(1.0 / frameTime) : RequiredFPS;
-                }
-                catch (Exception e)
-                {
-                    Console.Clear();
-                    Renderer.Reset();
-                    Console.WriteLine(e);
-                    Console.ReadLine();
-                    Stop();
-                }
-            }
-        }
-        finally
-        {
-            Console.CancelKeyPress -= OnCancel;
-            Renderer.Reset();
-            Console.Write("\x1b[0m\x1b[?25h\x1b[?1049l");
-            Console.CursorVisible = true;
-        }
+        Console.Write("\x1b[?1049h\x1b[?25l\x1b[2J\x1b[H");
     }
 
     private void OnCancel(object? sender, ConsoleCancelEventArgs e)
@@ -256,11 +258,11 @@ public class TUI
     {
         if (SizeChanged())
         {
-            _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
+            _canvas?.Resize(Console.WindowWidth, Console.WindowHeight);
             try
             {
                 Console.Clear();
-                Renderer.Reset();
+                _renderer?.Reset();
                 Console.CursorVisible = false;
             }
             catch
@@ -303,7 +305,7 @@ public class TUI
 
     private bool SizeChanged()
     {
-        return (_canvas.Width != Console.WindowWidth || _canvas.Height != Console.WindowHeight)
+        return (_canvas?.Width != Console.WindowWidth || _canvas?.Height != Console.WindowHeight)
                && Console.WindowWidth > 0 
                && Console.WindowHeight > 0;
     }
@@ -408,10 +410,10 @@ public class TUI
     {
         foreach (var element in _elements)
         {
-            Painter.Paint(element, _canvas);
+            Painter.Paint(element, _canvas!);
         }
         
-        Renderer.Draw(_canvas);
+        _renderer?.Draw(_canvas!);
     }
 
     public void RemoveElement(Element element)

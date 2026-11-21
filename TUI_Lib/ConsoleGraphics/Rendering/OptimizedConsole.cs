@@ -49,7 +49,7 @@ public class OptimizedConsole
         _stringBuilder.Append(text);
         
         _nextX += text.Length;
-        if (_nextX >= Console.BufferWidth) { _nextX = -1; _nextY = -1; }
+        if (_nextX >= Console.WindowWidth) { _nextX = -1; _nextY = -1; }
     }
 
     private void AppendColor()
@@ -75,11 +75,11 @@ public class OptimizedConsole
     
     public void Flush()
     {
+        Console.Write("\x1b[?25l");
+        
         if (_stringBuilder.Length == 0) return;
         
-        var str = _stringBuilder.ToString();
-        
-        Console.Write($"\x1b[?2026h{str}\x1b[?2026l");
+        Console.Write($"\x1b[?2026h{_stringBuilder}\x1b[?2026l");
         
         _stringBuilder.Clear();
     }
