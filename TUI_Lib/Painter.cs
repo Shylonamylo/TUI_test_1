@@ -9,7 +9,7 @@ public static class Painter
 {
     private static Dictionary<Type, IElementRenderer> _renderers = new();
     
-    public static void Paint(Element element, Canvas canvas)
+    public static void Paint(Element element, IDrawableCanvas canvas)
     {
         var type = element.GetType();
         
