@@ -146,8 +146,7 @@ public class TUI
         
         Console.CancelKeyPress += OnCancel;
         
-        Console.Write("\x1b[?1049h\x1b[?25l");
-        Console.Write("\x1b[2J\x1b[H");
+        Console.Write("\x1b[?1049h\x1b[?25l\x1b[2J\x1b[H");
     }
 
     private void OnCancel(object? sender, ConsoleCancelEventArgs e)
