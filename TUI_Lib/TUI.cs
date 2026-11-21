@@ -44,6 +44,8 @@ public class TUI
         ElementManager.Init();
         
         Stopwatch stopwatch = Stopwatch.StartNew();
+        
+        Exception? crash = null;
 
         try
         {
@@ -81,9 +83,7 @@ public class TUI
                 }
                 catch (Exception e)
                 {
-                    Console.Write("\x1b[0m\x1b[?2J\x1b[?25h");
-                    _renderer?.Reset();
-                    Console.WriteLine(e);
+                    crash = e;
                     Stop();
                 }
             }
@@ -93,6 +93,10 @@ public class TUI
             Console.CancelKeyPress -= OnCancel;
             _renderer?.Reset();
             Console.Write("\x1b[0m\x1b[?25h\x1b[?1049l");
+            if (crash != null)
+            {
+                Console.WriteLine(crash);
+            }
         }
     }
 
@@ -172,9 +176,8 @@ public class TUI
             _canvas?.Resize(Console.WindowWidth, Console.WindowHeight);
             try
             {
-                Console.Clear();
+                Console.Write("\x1b[?25l\x1b[2J\x1b[H");
                 _renderer?.Reset();
-                Console.CursorVisible = false;
             }
             catch
             {
