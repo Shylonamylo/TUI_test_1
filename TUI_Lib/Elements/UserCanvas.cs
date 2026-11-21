@@ -35,6 +35,7 @@ public class UserCanvas : Element, IDrawableCanvas
     
     public bool SetCell(int x, int y, char c, Style style)
     {
+        Invalidate();
         return _canvas.SetCell(x, y, c, style);
     }
 
