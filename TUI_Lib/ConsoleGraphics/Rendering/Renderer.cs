@@ -20,10 +20,10 @@ public class Renderer
             
             for (int x = 0; x < maxX; x++)
             {
-                Cell cell = canvas.GetCell(x, y);
-                
                 if (canvas.HasChanged(x, y))
                 {
+                    Cell cell = canvas.GetCell(x, y);
+                    
                     if (startX == -1)
                     {
                         startX = x;
