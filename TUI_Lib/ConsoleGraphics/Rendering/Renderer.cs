@@ -10,8 +10,8 @@ public class Renderer
     private readonly StringBuilder _stringBuilder = new();
     public void Draw(Canvas canvas)
     {
-        int maxX = Math.Min(canvas.Width, Console.WindowWidth - 1);
-        int maxY = Math.Min(canvas.Height, Console.WindowHeight - 1);
+        int maxX = Math.Min(canvas.Width, Console.WindowWidth);
+        int maxY = Math.Min(canvas.Height, Console.WindowHeight);
 
         for (int y = 0; y < maxY; y++)
         {
