@@ -26,9 +26,9 @@ public class TUI
 
     public int FPS { get; private set; } = 0;
 
-    private Renderer _renderer;
+    private Renderer? _renderer;
 
-    private Canvas _canvas;
+    private Canvas? _canvas;
 
     private readonly List<Element> _elements = new();
 
@@ -38,18 +38,15 @@ public class TUI
 
     private bool _stopped = false;
 
-    public TUI()
-    {
-    }
-
     public void Run()
     {
         ConsoleInit();
 
         _canvas = new Canvas(Console.WindowWidth, Console.WindowHeight);
+        
         _renderer = new Renderer();
         
-        _renderer.Reset();
+        _renderer?.Reset();
 
         SelectElement(_minSelectableId);
 
@@ -98,7 +95,7 @@ public class TUI
                 catch (Exception e)
                 {
                     Console.Clear();
-                    _renderer.Reset();
+                    _renderer?.Reset();
                     Console.WriteLine(e);
                     Console.ReadLine();
                     Stop();
@@ -108,7 +105,7 @@ public class TUI
         finally
         {
             Console.CancelKeyPress -= OnCancel;
-            _renderer.Reset();
+            _renderer?.Reset();
             Console.Write("\x1b[0m\x1b[?25h\x1b[?1049l");
         }
     }
@@ -262,11 +259,11 @@ public class TUI
     {
         if (SizeChanged())
         {
-            _canvas.Resize(Console.WindowWidth, Console.WindowHeight);
+            _canvas?.Resize(Console.WindowWidth, Console.WindowHeight);
             try
             {
                 Console.Clear();
-                _renderer.Reset();
+                _renderer?.Reset();
                 Console.CursorVisible = false;
             }
             catch
@@ -309,7 +306,7 @@ public class TUI
 
     private bool SizeChanged()
     {
-        return (_canvas.Width != Console.WindowWidth || _canvas.Height != Console.WindowHeight)
+        return (_canvas?.Width != Console.WindowWidth || _canvas?.Height != Console.WindowHeight)
                && Console.WindowWidth > 0 
                && Console.WindowHeight > 0;
     }
@@ -414,10 +411,10 @@ public class TUI
     {
         foreach (var element in _elements)
         {
-            Painter.Paint(element, _canvas);
+            Painter.Paint(element, _canvas!);
         }
         
-        _renderer.Draw(_canvas);
+        _renderer?.Draw(_canvas!);
     }
 
     public void RemoveElement(Element element)
