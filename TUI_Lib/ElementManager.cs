@@ -33,6 +33,7 @@ public class ElementManager
                 
                 int indexToRemove = _elements.IndexOf(elementToRemove);
                     
+                elementToRemove.Invalidate();
                 _elements.Remove(elementToRemove);
                 
                 if (_elements.Count == 0) {
@@ -81,6 +82,7 @@ public class ElementManager
                 if(_elements.Contains(element) || _elements.Any(e => e.Id == element.Id)) continue;
                 
                 _elements.Add(element);
+                element.Invalidate();
                 
                 if (element.Selectable || SelectedIndex==-1)
                 {
@@ -185,6 +187,15 @@ public class ElementManager
             SelectedIndex = index;
         }
     }
+
+    public void DeselectCurrent()
+    {
+        if (SelectedIndex >= 0 && SelectedIndex < _elements.Count)
+        {
+            _elements[SelectedIndex].Selected = false;
+        }
+    }
+    
     public void RecalculateIndexes()
     {
         _maxSelectableId = -1;

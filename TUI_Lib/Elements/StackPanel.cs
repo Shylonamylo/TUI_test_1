@@ -15,6 +15,7 @@ public class StackPanel : Container
             if (IsDirty)
             {
                 RecalculateSize();
+                IsDirty = false;
             }
 
             return _cachedSize;
