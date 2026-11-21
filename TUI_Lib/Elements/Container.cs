@@ -18,7 +18,14 @@ public abstract class Container : Element
         set
         {
             _selected = value;
-            ElementManager.SelectElement(ElementManager.SelectedIndex);
+            if (value)
+            {
+                ElementManager.SelectElement(ElementManager.SelectedIndex);
+            }
+            else
+            {
+                ElementManager.DeselectCurrent();
+            }
         }
     }
     
