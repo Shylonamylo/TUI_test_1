@@ -6,7 +6,7 @@ public class StackPanel : Container
 {
     public bool Horizontal { get; set; } = false;
     
-    private Vec2I _cachedSize = new Vec2I();
+    private Vec2I _cachedSize;
 
     public override Vec2I Size
     {
@@ -14,8 +14,7 @@ public class StackPanel : Container
         {
             if (IsDirty)
             {
-                recalculateSize();
-                IsDirty = false;
+                RecalculateSize();
             }
 
             return _cachedSize;
@@ -24,8 +23,7 @@ public class StackPanel : Container
 
     public override bool HandleKey(ConsoleKeyInfo key)
     {
-        if (Elements.Count == 0 || SelectedIndex < 0 || SelectedIndex >= Elements.Count) return false;
-        if (Elements[SelectedIndex].HandleKey(key)) return true;
+        if(ElementManager.HandleKey(key)) return true;
 
         if (Horizontal)
         {
@@ -33,20 +31,12 @@ public class StackPanel : Container
             {
                 case ConsoleKey.LeftArrow:
                 
-                    if (SelectedIndex > MinSelectableId)
-                    {
-                        if(MoveSelection(-1)) return true;
-                    }
-                
+                    if(ElementManager.MoveSelection(-1)) return true;
                     break;
             
                 case ConsoleKey.RightArrow:
                 
-                    if (SelectedIndex < MaxSelectableId)
-                    {
-                        if(MoveSelection(1)) return true;
-                    }
-                
+                    if(ElementManager.MoveSelection(1)) return true;
                     break;
             }
         }
@@ -55,21 +45,11 @@ public class StackPanel : Container
             switch (key.Key)
             {
                 case ConsoleKey.UpArrow:
-                
-                    if (SelectedIndex > MinSelectableId)
-                    {
-                        if(MoveSelection(-1)) return true;
-                    }
-                
+                    if(ElementManager.MoveSelection(-1)) return true;
                     break;
             
                 case ConsoleKey.DownArrow:
-                
-                    if (SelectedIndex < MaxSelectableId)
-                    {
-                        if(MoveSelection(1)) return true;
-                    }
-                
+                    if(ElementManager.MoveSelection(1)) return true;
                     break;
             }
         }
@@ -77,7 +57,7 @@ public class StackPanel : Container
         return false;
     }
 
-    private void recalculateSize()
+    private void RecalculateSize()
     {
         if (Horizontal)
         {
