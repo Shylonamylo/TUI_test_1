@@ -6,7 +6,7 @@ namespace TUI_Lib.Renderers;
 
 public class TextBlockRenderer : IElementRenderer
 {
-    public void Render(Element element, Canvas canvas)
+    public void Render(Element element, IDrawableCanvas canvas)
     {
         TextBlock textBlock = (TextBlock)element;
         

@@ -7,7 +7,7 @@ namespace TUI_Lib.Renderers;
 
 public class StackPanelRenderer : IElementRenderer
 {
-    public void Render(Element element, Canvas canvas)
+    public void Render(Element element, IDrawableCanvas canvas)
     {
         StackPanel stackPanel = (StackPanel)element;
         if (stackPanel.Horizontal)
