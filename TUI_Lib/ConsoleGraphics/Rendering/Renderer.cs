@@ -7,12 +7,11 @@ namespace TUI_Lib.ConsoleGraphics.Rendering;
 public class Renderer
 {
     private readonly OptimizedConsole _optimizedConsole = new();
+    private readonly StringBuilder _stringBuilder = new();
     public void Draw(Canvas canvas)
     {
-        int maxX = Math.Min(canvas.Width, Console.BufferWidth - 1);
-        int maxY = Math.Min(canvas.Height, Console.BufferHeight - 1);
-        
-        StringBuilder stringBuilder = new StringBuilder();
+        int maxX = Math.Min(canvas.Width, Console.WindowWidth - 1);
+        int maxY = Math.Min(canvas.Height, Console.WindowHeight - 1);
 
         for (int y = 0; y < maxY; y++)
         {
@@ -29,21 +28,21 @@ public class Renderer
                     {
                         startX = x;
                         lastStyle = cell.Style;
-                        stringBuilder.Append(cell.Char);
+                        _stringBuilder.Append(cell.Char);
                     }
                     else
                     {
                         if (cell.Style != lastStyle)
                         {
-                            Flush(startX, y, stringBuilder, lastStyle ?? Style.Default);
+                            Flush(startX, y, _stringBuilder, lastStyle ?? Style.Default);
                             startX = x;
                             lastStyle = cell.Style;
-                            stringBuilder.Clear();
-                            stringBuilder.Append(cell.Char);
+                            _stringBuilder.Clear();
+                            _stringBuilder.Append(cell.Char);
                         }
                         else
                         {
-                            stringBuilder.Append(cell.Char);
+                            _stringBuilder.Append(cell.Char);
                         }
                     }
                 }
@@ -51,20 +50,21 @@ public class Renderer
                 {
                     if (startX != -1)
                     {
-                        Flush(startX, y, stringBuilder, lastStyle ?? Style.Default);
+                        Flush(startX, y, _stringBuilder, lastStyle ?? Style.Default);
                         startX = -1;
-                        stringBuilder.Clear();
+                        _stringBuilder.Clear();
                     }
                 }
             }
             if (startX != -1)
             {
-                Flush(startX, y, stringBuilder, lastStyle ?? Style.Default);
-                stringBuilder.Clear();
+                Flush(startX, y, _stringBuilder, lastStyle ?? Style.Default);
+                _stringBuilder.Clear();
             }
         }
         _optimizedConsole.Flush();
         canvas.Commit();
+        _stringBuilder.Clear();
     }
 
     private void Flush(int x, int y, StringBuilder text, Style style)
