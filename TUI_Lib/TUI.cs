@@ -94,10 +94,9 @@ public class TUI
                 }
                 catch (Exception e)
                 {
-                    Console.Clear();
+                    Console.Write("\x1b[0m\x1b[?2J\x1b[?25h");
                     _renderer?.Reset();
                     Console.WriteLine(e);
-                    Console.ReadLine();
                     Stop();
                 }
             }
