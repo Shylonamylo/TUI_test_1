@@ -13,11 +13,8 @@ public class TUI
     public event Action<double>? OnTick;
     public event Action<ConsoleKeyInfo>? OnKeyAvailable;
 
-    private List<int> _removeList = new();
-    private List<Element> _addList = new();
-
-    public int SelectedIndex { get; private set; } = 0;
-
+    public ElementManager ElementManager { get; } = new();
+    
     public int RequiredFPS
     {
         get => _requiredFps;
@@ -30,10 +27,6 @@ public class TUI
 
     private Canvas? _canvas;
 
-    private readonly List<Element> _elements = new();
-
-    private int _maxSelectableId = -1;
-    private int _minSelectableId = -1;
     private int _requiredFps = 60;
 
     private bool _stopped = false;
@@ -48,12 +41,7 @@ public class TUI
         
         _renderer?.Reset();
 
-        SelectElement(_minSelectableId);
-
-        ProcessRemoveList();
-        ProcessAddList();
-        RecalculateIndexes();
-        SelectElement(_minSelectableId);
+        ElementManager.Init();
         
         Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -67,14 +55,13 @@ public class TUI
 
                     CheckSizeChanged();
 
-                    ProcessRemoveList();
-                    ProcessAddList();
+                    ElementManager.Update();
 
                     ProcessConsoleKeyBuffer();
 
-                    UpdateElements();
+                    ElementManager.UpdateElements();
 
-                    RenderElements();
+                    ElementManager.RenderElements(_renderer!, _canvas!);
 
                     var frameTime = stopwatch.Elapsed.TotalSeconds - startTime;
                     var sleepTime = (1.0 / RequiredFPS) - frameTime;
@@ -116,8 +103,8 @@ public class TUI
 
         if (OperatingSystem.IsWindows())
         {
-            const int STD_OUTPUT_HANDLE = -11;
-            const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+            const int stdOutputHandle = -11;
+            const uint enableVirtualTerminalProcessing = 4;
 
             [DllImport("kernel32.dll", SetLastError = true)]
             static extern IntPtr GetStdHandle(int nStdHandle);
@@ -130,10 +117,9 @@ public class TUI
 
             void SetupConsole()
             {
-                IntPtr handle = GetStdHandle(STD_OUTPUT_HANDLE);
-                uint mode;
-                GetConsoleMode(handle, out mode);
-                mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+                IntPtr handle = GetStdHandle(stdOutputHandle);
+                GetConsoleMode(handle, out var mode);
+                mode |= enableVirtualTerminalProcessing;
                 SetConsoleMode(handle, mode);
             }
 
@@ -158,102 +144,27 @@ public class TUI
             var key = Console.ReadKey(true);
                 
             OnKeyAvailable?.Invoke(key);
-                
+
             HandleKey(key);
         }
     }
 
-    private void ProcessRemoveList()
+    private void HandleKey(ConsoleKeyInfo key)
     {
-        if (_removeList.Count > 0)
+        if (!ElementManager.HandleKey(key))
         {
-            bool needToRecalculate = false;
-            foreach (var element in _removeList)
+            switch (key.Key)
             {
-                Element? elementToRemove = _elements.Find(e => e.Id == element);
-
-                if (elementToRemove == null)
-                {
-                    continue;
-                }
-                
-                int indexToRemove = _elements.IndexOf(elementToRemove);
-                    
-                _elements.Remove(elementToRemove);
-                
-                if (_elements.Count == 0) {
-                    SelectedIndex = -1;
+                case ConsoleKey.UpArrow:
+                    ElementManager.MoveSelection(-1);
                     break;
-                }
-
-                if (SelectedIndex > indexToRemove)
-                {
-                    SelectedIndex = Math.Clamp(SelectedIndex-1, 0, _elements.Count - 1);
-                }
-                
-                if (elementToRemove.Selected)
-                {
-                    needToRecalculate = true;
-                }
-            }
-            if (needToRecalculate)
-            {
-                RecalculateIndexes();
-                    
-                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
-
-                if (nearestSelectableElement != -1)
-                {
-                    SelectElement(nearestSelectableElement);
-                }
-                else
-                {
-                    SelectedIndex = -1;
-                }
+                case ConsoleKey.DownArrow:
+                    ElementManager.MoveSelection(1);
+                    break;
             }
         }
-
-        _removeList.Clear();
     }
 
-    private void ProcessAddList()
-    {
-        if (_addList.Count > 0)
-        {
-            bool needToRecalculate = false;
-            
-            foreach (var element in _addList)
-            {
-                if(_elements.Contains(element) || _elements.Any(e => e.Id == element.Id)) continue;
-                
-                _elements.Add(element);
-                
-                if (element.Selectable || SelectedIndex==-1)
-                {
-                    needToRecalculate = true;
-                }
-            }
-            
-            if (needToRecalculate)
-            {
-                RecalculateIndexes();
-                    
-                int nearestSelectableElement = SearchNearestSelectableElement(SelectedIndex);
-
-                if (nearestSelectableElement != -1)
-                {
-                    SelectElement(nearestSelectableElement);
-                }
-                else
-                {
-                    SelectedIndex = -1;
-                }
-            }
-        }
-
-        _addList.Clear();
-    }
-    
     private void CheckSizeChanged()
     {
         if (SizeChanged())
@@ -272,153 +183,22 @@ public class TUI
         }
     }
 
-    private int SearchNearestSelectableElement(int pos)
-    {
-        if (_elements.Count == 0) return -1;
-        
-        pos = Math.Clamp(pos, 0, _elements.Count - 1); 
-        
-        int nearestSelectableElement = -1;
-        
-        for (int i = 0; i < _elements.Count; i++)
-        {
-            if (pos - i >= 0)
-            {
-                if (_elements[pos - i].Selectable)
-                {
-                    nearestSelectableElement = pos - i;
-                    break;
-                }
-            }
-            if (pos + i < _elements.Count)
-            {
-                if (_elements[pos + i].Selectable)
-                {
-                    nearestSelectableElement = pos + i;
-                    break;
-                }
-            }
-        }
-
-        return nearestSelectableElement;
-    }
-
     private bool SizeChanged()
     {
         return (_canvas?.Width != Console.WindowWidth || _canvas?.Height != Console.WindowHeight)
                && Console.WindowWidth > 0 
                && Console.WindowHeight > 0;
     }
-
-    private void SelectElement(int index)
-    {
-        if (index >= 0 && _elements.Count > 0 && index < _elements.Count)
-        { 
-            if (SelectedIndex >= 0 && SelectedIndex < _elements.Count)
-            {
-                _elements[SelectedIndex].Selected = false;
-            }
-            _elements[index].Selected = true;
-            SelectedIndex = index;
-        }
-    }
     
-    private void MoveSelection(int delta)
-    {
-        var index = -1;
-        if (delta > 0)
-        {
-            for (int i = SelectedIndex+delta; i < _elements.Count; i++)
-            {
-                if (_elements[i].Selectable)
-                {
-                    index = i;
-                    break;
-                }
-            }
-        }else if (delta < 0)
-        {
-            for (int i = SelectedIndex+delta; i >= 0; i--)
-            {
-                if (_elements[i].Selectable)
-                {
-                    index = i;
-                    break;
-                }
-            }
-        }
-
-        if (index != -1)
-        {
-            SelectElement(index);
-        }
-    }
-
-    public void HandleKey(ConsoleKeyInfo key)
-    {
-        if (_elements.Count > 0 && SelectedIndex >= 0 && SelectedIndex < _elements.Count)
-        {
-            if(_elements[SelectedIndex].HandleKey(key)) return;
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    MoveSelection(-1);
-                    break;
-                case ConsoleKey.DownArrow:
-                    MoveSelection(1);
-                    break;
-            }
-        }
-    }
-    
-    private void RecalculateIndexes()
-    {
-        _maxSelectableId = -1;
-        _minSelectableId = -1;
-        
-        for (int i = 0; i < _elements.Count; i++)
-        {
-            if (_minSelectableId == -1)
-            {
-                if (_elements[i].Selectable)
-                {
-                    _minSelectableId = i;
-                }
-            }
-            if (_elements[i].Selectable)
-            {
-                _maxSelectableId = i;
-            }
-        }
-    }
     
     public void AddElement(Element element)
     {
-        element.Id = IdGenerator.GetNewId();
-        _addList.Add(element);
-    }
-
-    public void UpdateElements()
-    {
-        foreach (var element in _elements)
-        {
-            element.ProcessPendingChanges();
-        }
-    }
-    
-    public void RenderElements()
-    {
-        foreach (var element in _elements)
-        {
-            Painter.Paint(element, _canvas!);
-        }
-        
-        _renderer?.Draw(_canvas!);
+        ElementManager.AddElement(element);
     }
 
     public void RemoveElement(Element element)
     {
-        _removeList.Add(element.Id);
+        ElementManager.RemoveElement(element);
     }
 
     public void Stop()

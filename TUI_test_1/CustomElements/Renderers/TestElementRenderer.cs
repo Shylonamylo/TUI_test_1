@@ -7,7 +7,7 @@ namespace TUI_test_1.CustomElements.Renderers;
 
 public class TestElementRenderer : IElementRenderer
 {
-    public void Render(Element element, Canvas canvas)
+    public void Render(Element element, IDrawableCanvas canvas)
     {
         TestElement testElement = (TestElement)element;
         canvas.WriteString(testElement.Position.X, testElement.Position.Y, testElement.Text, testElement.Style);

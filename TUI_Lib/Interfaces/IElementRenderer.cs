@@ -5,5 +5,5 @@ namespace TUI_Lib.Interfaces;
 
 public interface IElementRenderer
 {
-    public void Render(Element element, Canvas canvas);
+    public void Render(Element element, IDrawableCanvas canvas);
 }
